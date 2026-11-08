@@ -1,0 +1,705 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="color-scheme" content="dark">
+  <meta name="theme-color" content="#0b111d">
+  <meta name="description" content="Mohammed Alrabiah's interactive analysis of revenue, discounts, and gross profit using the 2013–2014 Financial Sample.">
+  <title>Financial Performance Analysis · Mohammed Alrabiah</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 48 48'%3E%3Crect width='48' height='48' rx='12' fill='%23182e34'/%3E%3Cpath d='M12 33V25M24 33V18M36 33V12' stroke='%2371ead1' stroke-width='4' stroke-linecap='round'/%3E%3C/svg%3E">
+  <style>:root {
+  font-family: "Inter", "Segoe UI", system-ui, -apple-system, sans-serif;
+  color-scheme: dark;
+  --page: #0b111d;
+  --surface: #111a29;
+  --panel: #111b2a;
+  --border: #273649;
+  --border-soft: #223043;
+  --ink: #edf4fb;
+  --muted: #a5b5c9;
+  --muted-light: #c5d1e0;
+  --mint: #7de8cf;
+  --violet: #b1a7ff;
+  --amber: #ffc18c;
+  --cost: #35546d;
+  --blue: #83a8cc;
+  --focus: #a4ffe7;
+  --radius: 15px;
+}
+*, *::before, *::after { box-sizing: border-box; }
+body { margin: 0; min-width: 320px; background: radial-gradient(ellipse at 74% 0%, #142136 0%, var(--page) 49rem); color: var(--ink); font-size: 14px; line-height: 1.5; }
+button, select { font: inherit; }
+button { cursor: pointer; }
+button:disabled { cursor: default; }
+button, select, summary, [tabindex]:not([tabindex="-1"]) { outline-offset: 3px; }
+:focus-visible { outline: 2px solid var(--focus); }
+h1, h2, h3, p { margin: 0; }
+h2 { font-size: 16px; letter-spacing: -.02em; font-weight: 680; line-height: 1.25; }
+h3 { font-size: 13px; font-weight: 680; letter-spacing: -.01em; line-height: 1.32; }
+.sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0; }
+.skip-link { position: absolute; top: 8px; left: 8px; background: var(--mint); color: #092b23; padding: 8px 12px; border-radius: 6px; transform: translateY(-150%); z-index: 10; }
+.skip-link:focus { transform: translateY(0); }
+.page { max-width: 1540px; padding: 0 clamp(16px, 3vw, 42px); margin: 0 auto; }
+.site-header { display: flex; justify-content: space-between; align-items: center; min-height: 69px; gap: 12px; }
+.brand { display: flex; align-items: center; gap: 10px; }
+.brand-mark { width: 35px; height: 35px; display: grid; place-items: center; color: var(--mint); background: #152f34; border: 1px solid #29484d; border-radius: 10px; }
+.brand-mark svg { width: 21px; height: 21px; }
+.brand-name, .brand-caption { display: block; line-height: 1.3; }
+.brand-name { color: #e9f2fc; font-size: 13px; font-weight: 700; }
+.brand-caption { color: var(--muted); font-size: 11px; margin-top: 2px; }
+.header-meta { display: flex; gap: 7px; align-items: center; font-size: 11px; color: var(--muted-light); border: 1px solid var(--border); background: #132034; padding: 5px 10px; border-radius: 20px; white-space: nowrap; }
+.status-dot { flex: 0 0 auto; width: 6px; height: 6px; border-radius: 50%; background: var(--mint); display: inline-block; }
+.hero { position: relative; display: flex; justify-content: space-between; align-items: center; gap: 22px; overflow: hidden; padding: 23px 28px; border: 1px solid #2a4553; border-radius: 17px; min-height: 137px; background: linear-gradient(105deg, #162a3c 0%, #131f33 55%, #14233a 100%); }
+.hero::before { content: ""; position: absolute; inset: 0 0 0 39%; opacity: .38; background-image: radial-gradient(#6bbba8 1px, transparent 1px); background-size: 17px 17px; mask-image: linear-gradient(to right, transparent, #000 54%); pointer-events: none; }
+.hero::after { content: ""; position: absolute; width: 420px; height: 210px; border-radius: 50%; background: #3cbaa0; opacity: .12; filter: blur(68px); top: -116px; right: 2%; pointer-events: none; }
+.hero-copy, .year-comparison { z-index: 1; }
+.eyebrow { display: flex; align-items: center; gap: 7px; margin-bottom: 5px; color: var(--mint); font-size: 10px; font-weight: 700; letter-spacing: .14em; text-transform: uppercase; }
+.eyebrow span { width: 12px; height: 1px; background: var(--mint); }
+h1 { font-size: clamp(25px, 3.22vw, 49px); font-weight: 730; letter-spacing: -.058em; line-height: 1.1; text-wrap: balance; }
+.hero-description { margin-top: 9px; color: var(--muted-light); font-size: clamp(12px, 1.08vw, 14px); }
+.year-comparison { flex: 0 0 auto; width: min(31%, 302px); min-width: 249px; border: 1px solid #375166; border-radius: 12px; padding: 11px 14px; background: #111d2f; box-shadow: 0 8px 21px #07101b4d; }
+.comparison-label { display: block; color: var(--muted); font-size: 10px; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+.comparison-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 5px; }
+.comparison-grid div + div { border-left: 1px solid var(--border); padding-left: 13px; }
+.comparison-grid strong { display: block; font-size: clamp(21px, 2vw, 29px); font-weight: 750; letter-spacing: -.045em; line-height: 1.17; font-variant-numeric: tabular-nums; }
+.comparison-grid span { color: var(--muted-light); font-size: 11px; }
+.decrease { color: var(--amber); }
+.increase { color: var(--mint); }
+.filter-panel { background: var(--panel); border: 1px solid var(--border); border-radius: 13px; padding: 11px 13px; margin: 13px 0 0; }
+#filters { display: grid; grid-template-columns: .8fr 1.18fr 1.23fr 1.04fr 1.15fr auto; align-items: end; gap: 10px; }
+.filter { display: grid; gap: 4px; min-width: 0; }
+.filter > span { color: var(--muted); font-size: 10px; font-weight: 670; letter-spacing: .055em; text-transform: uppercase; }
+.filter select { width: 100%; padding: 6px 28px 6px 10px; appearance: none; color: var(--ink); background: #0f1928 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath d='m4 6 4 4 4-4' fill='none' stroke='%23a7b7cc' stroke-width='1.5' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E") no-repeat right 9px center / 14px; border: 1px solid #34455b; border-radius: 7px; min-height: 35px; font-size: 12px; cursor: pointer; text-overflow: ellipsis; }
+.filter select.has-filter { border-color: #4e9b89; background-color: #163133; }
+.filter select:hover { border-color: #6c849e; }
+.reset-button { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-height: 35px; padding: 5px 10px; color: var(--muted-light); background: #1c293b; border: 1px solid #34455b; border-radius: 7px; font-size: 11px; font-weight: 650; white-space: nowrap; transition: background .15s ease, border-color .15s ease; }
+.reset-button svg { width: 15px; height: 15px; }
+.reset-button:not(:disabled):hover { background: #24384c; border-color: #6f879e; }
+.reset-button:disabled { opacity: .59; }
+.section-line { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin: 13px 0 7px; }
+.section-line h2 { font-size: 12px; color: var(--muted-light); font-weight: 670; }
+#result-status { display: flex; align-items: center; gap: 6px; color: var(--muted); font-size: 11px; text-align: right; }
+#result-status .status-dot { width: 5px; height: 5px; }
+#result-status.no-data .status-dot { background: var(--amber); }
+.kpi-grid { display: grid; grid-template-columns: repeat(6,minmax(0,1fr)); gap: 11px; }
+.kpi { background: linear-gradient(140deg,#162234,#111b2a 80%); border: 1px solid var(--border); border-radius: 12px; padding: 12px 13px 11px; min-width: 0; min-height: 96px; }
+.kpi-primary { background: linear-gradient(140deg,#17333a,#142333 78%); border-color: #365958; }
+.kpi-label { color: var(--muted-light); display: flex; align-items: center; gap: 6px; font-size: 11px; font-weight: 620; white-space: nowrap; }
+.metric-dot { flex: 0 0 auto; display: inline-block; width: 6px; height: 6px; border-radius: 50%; }
+.metric-dot.mint { background: var(--mint); }
+.metric-dot.violet { background: var(--violet); }
+.metric-dot.slate { background: var(--blue); }
+.metric-dot.amber { background: var(--amber); }
+.kpi-value { color: var(--ink); font-weight: 730; font-variant-numeric: tabular-nums; font-size: clamp(19px, 2.15vw, 32px); letter-spacing: -.05em; line-height: 1.1; margin-top: 5px; }
+.kpi-primary .kpi-value { color: var(--mint); }
+.kpi-note { margin-top: 5px; color: var(--muted); font-size: 10px; line-height: 1.25; }
+.chart-row, .analysis-row { display: grid; gap: 12px; margin-top: 12px; }
+.chart-row { grid-template-columns: minmax(0,1.36fr) minmax(0,1fr); }
+.analysis-row { grid-template-columns: minmax(0,1.02fr) minmax(0,1fr); }
+.panel { min-width: 0; padding: 15px 16px; background: var(--panel); border: 1px solid var(--border); border-radius: var(--radius); }
+.panel-header { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; }
+.panel-sub { color: var(--muted); font-size: 11px; margin-top: 3px; }
+.switch { flex: 0 0 auto; display: inline-flex; gap: 2px; border-radius: 8px; padding: 3px; background: #0c1624; border: 1px solid var(--border-soft); }
+.switch button { background: transparent; color: var(--muted); border: 1px solid transparent; border-radius: 5px; padding: 4px 6px; font-size: 10px; line-height: 1.25; white-space: nowrap; }
+.switch button:hover { color: var(--ink); }
+.switch button[aria-pressed="true"] { color: var(--ink); background: #25364b; border-color: #344860; font-weight: 650; }
+.chart-key { display: flex; flex-wrap: wrap; align-items: center; gap: 12px; min-height: 20px; color: var(--muted-light); font-size: 10px; margin-top: 7px; }
+.chart-key > span { display: inline-flex; align-items: center; gap: 5px; }
+.key-dot { display: inline-block; width: 7px; height: 7px; border-radius: 2px; }
+.profit-color { background: var(--mint); }
+.cost-color { background: var(--cost); }
+.plot { position: relative; min-height: 189px; width: 100%; margin: 0; }
+#trend-chart { display: block; width: 100%; height: 189px; overflow: visible; }
+.axis-label { fill: #a5b5c9; font-size: 10px; font-variant-numeric: tabular-nums; }
+.gridline { stroke: #29394b; stroke-width: 1; shape-rendering: crispEdges; }
+.hoverline { stroke: #6a8197; stroke-width: 1; stroke-dasharray: 3 3; pointer-events: none; }
+.chart-point { stroke: var(--panel); stroke-width: 2.2; }
+.month-target:focus-visible { outline: none; }
+.month-target:focus-visible rect { fill: #ffffff0b; stroke: var(--mint); stroke-width: 1; }
+.chart-tooltip { z-index: 4; position: absolute; top: 7px; min-width: 125px; max-width: calc(100% - 10px); border: 1px solid #45617a; background: #0e1725; box-shadow: 0 6px 22px #0007; border-radius: 8px; padding: 7px 10px; font-size: 11px; pointer-events: none; }
+.chart-tooltip strong { display: block; font-weight: 650; margin-bottom: 3px; }
+.chart-tooltip .tip-row { display: flex; justify-content: space-between; gap: 12px; color: var(--muted-light); white-space: nowrap; font-variant-numeric: tabular-nums; }
+.chart-tooltip .tip-value { color: var(--ink); }
+.chart-empty { position: absolute; inset: 0; display: grid; place-items: center; color: var(--muted); font-size: 12px; }
+.chart-empty[hidden] { display: none; }
+.breakdown-bars { display: grid; gap: 4px; margin-top: 5px; }
+.rank-row { display: grid; grid-template-columns: minmax(78px,.77fr) minmax(0,1.85fr) minmax(59px,.72fr); align-items: center; gap: 7px; min-height: 29px; background: transparent; border: 1px solid transparent; color: var(--ink); text-align: left; border-radius: 6px; padding: 2px 3px; width: 100%; transition: border-color .15s ease, background .15s ease; }
+.rank-row:hover, .rank-row[aria-pressed="true"] { background: #192b3d; border-color: #39566b; }
+.rank-label { color: var(--muted-light); font-size: 11px; font-weight: 620; line-height: 1.16; }
+.rank-value { text-align: right; font-size: 11px; font-weight: 710; line-height: 1.16; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.rank-value small { color: var(--muted); font-size: 9px; font-weight: 500; display: block; margin-top: 2px; }
+.bar-track { height: 9px; background: #1c293b; border-radius: 8px; overflow: hidden; }
+.bar-fill { height: 100%; display: flex; background: var(--cost); border-radius: 8px; overflow: hidden; transform-origin: left center; animation: grow .35s ease-out both; }
+.bar-profit { height: 100%; background: linear-gradient(90deg,#56baa8,#88ecd4); }
+@keyframes grow { from { transform: scaleX(.12); opacity: .45; } to { transform: scaleX(1); opacity: 1; } }
+.empty-bars { margin: 28px auto; color: var(--muted); font-size: 12px; }
+.table-scroll { width: 100%; overflow-x: auto; margin-top: 9px; }
+table { border-collapse: collapse; width: 100%; min-width: 515px; font-variant-numeric: tabular-nums; font-size: 11px; }
+thead { color: var(--muted); font-weight: 650; border-bottom: 1px solid var(--border); }
+th, td { padding: 7px 6px; text-align: right; white-space: nowrap; }
+thead th { font-size: 10px; font-weight: 650; }
+th:first-child { text-align: left; padding-left: 3px; }
+tbody tr, tfoot tr { border-bottom: 1px solid #233245; }
+tbody tr:hover { background: #172639; }
+tfoot { color: var(--ink); background: #19283a; font-weight: 710; }
+tfoot tr { border-bottom: 0; }
+tfoot th:first-child { padding-left: 9px; border-radius: 5px 0 0 5px; }
+tfoot td:last-child { border-radius: 0 5px 5px 0; }
+.band-button { display: inline-flex; align-items: center; gap: 5px; padding: 2px 5px; background: transparent; border: 1px solid transparent; border-radius: 5px; color: var(--muted-light); font-size: 11px; }
+.band-button:hover, .band-button[aria-pressed="true"] { border-color: #486a79; background: #233648; color: var(--ink); }
+.band-button i { width: 6px; height: 6px; display: inline-block; border-radius: 50%; }
+.band-button small { color: var(--muted); margin-left: 1px; font-size: 10px; }
+.band-none { background: #92a7be; }
+.band-low { background: var(--mint); }
+.band-medium { background: var(--violet); }
+.band-high { background: var(--amber); }
+.top-profit { color: var(--mint); font-weight: 700; }
+.table-empty { color: var(--muted); padding: 16px 8px; text-align: center; }
+.findings { list-style: none; margin: 8px 0 0; padding: 0; }
+.finding { display: grid; grid-template-columns: 25px minmax(0,1fr); gap: 9px; padding: 7px 0; border-top: 1px solid var(--border-soft); }
+.finding:first-child { border-top: 0; }
+.finding:last-child { padding-bottom: 0; }
+.finding-num { display: grid; place-items: center; width: 24px; height: 23px; border-radius: 6px; background: #24313e; color: var(--amber); font-weight: 750; font-size: 10px; font-variant-numeric: tabular-nums; }
+.finding:nth-child(2) .finding-num { background: #292b44; color: var(--violet); }
+.finding:nth-child(3) .finding-num { background: #1c3739; color: var(--mint); }
+.finding p { color: var(--muted-light); font-size: 11.5px; line-height: 1.38; margin-top: 2px; }
+.finding p strong { font-weight: 710; color: #eff5fc; }
+.finding .recommendation { color: var(--muted); }
+.site-footer { display: flex; justify-content: space-between; align-items: start; gap: 15px; margin: 12px 0 17px; font-size: 10px; color: var(--muted); }
+.site-footer strong { color: var(--muted-light); }
+.site-footer details { flex: 0 1 450px; text-align: right; }
+.site-footer summary { cursor: pointer; display: list-item; width: max-content; margin-left: auto; }
+.site-footer details p { margin-top: 5px; text-align: left; padding: 7px 9px; background: var(--panel); border: 1px solid var(--border); border-radius: 7px; }
+.noscript-message { margin-top: 10px; color: var(--amber); }
+@media (max-width: 1200px) {
+  .chart-row { grid-template-columns: minmax(0,1.23fr) minmax(0,1fr); }
+  .panel { padding: 13px; }
+  .panel-header { flex-wrap: wrap; }
+  .analysis-row { grid-template-columns: minmax(0,1.1fr) minmax(0,1fr); }
+  .kpi { padding-left: 11px; padding-right: 11px; }
+}
+@media (max-width: 910px) {
+  .hero { align-items: stretch; padding: 18px 19px; }
+  .year-comparison { min-width: 213px; align-self: center; }
+  #filters { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  .kpi-grid { grid-template-columns: repeat(3,minmax(0,1fr)); }
+  .kpi { min-height: 89px; }
+  .kpi-value { font-size: clamp(23px, 3.5vw, 32px); }
+  .chart-row, .analysis-row { grid-template-columns: minmax(0,1fr); }
+  .panel { padding: 15px; }
+  .panel-header { flex-wrap: nowrap; }
+  .rank-row { grid-template-columns: minmax(85px,1fr) minmax(0,2.7fr) minmax(75px,.8fr); }
+  .finding p { font-size: 12px; }
+}
+@media (max-width: 570px) {
+  .page { padding: 0 13px; }
+  .site-header { min-height: 59px; }
+  .brand-mark { width: 32px; height: 32px; }
+  .brand-name { font-size: 12px; }
+  .brand-caption, .header-meta { font-size: 10px; }
+  .hero { flex-direction: column; padding: 16px; gap: 14px; }
+  .hero-copy h1 { text-wrap: unset; font-size: clamp(28px,7vw,36px); }
+  .hero-description { line-height: 1.48; }
+  .year-comparison { width: 100%; min-width: 0; }
+  .comparison-grid strong { font-size: 25px; }
+  #filters { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+  .filter select, .reset-button { min-height: 39px; }
+  .kpi-grid { grid-template-columns: repeat(2,minmax(0,1fr)); gap: 8px; }
+  .kpi-value { font-size: 25px; }
+  .panel-header { flex-wrap: wrap; }
+  .panel { padding: 12px; }
+  .panel h2 { font-size: 15px; }
+  .switch button { padding: 6px 8px; }
+  .rank-row { grid-template-columns: minmax(72px,.9fr) minmax(0,1.4fr) minmax(65px,.75fr); min-height: 35px; }
+  .site-footer { flex-wrap: wrap; }
+  .site-footer details { flex: 1 1 100%; text-align: left; }
+  .site-footer summary { margin-left: 0; }
+}
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: .001ms !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+}
+</style>
+</head>
+<body>
+  <a class="skip-link" href="#filters">Skip to filters</a>
+  <div class="page">
+    <header class="site-header">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none"><path d="M5 19v-6m7 6V9m7 10V5" stroke="currentColor" stroke-width="2.25" stroke-linecap="round"/></svg>
+        </span>
+        <div><span class="brand-name">Mohammed Alrabiah</span><span class="brand-caption">Data portfolio</span></div>
+      </div>
+      <div class="header-meta"><span class="status-dot"></span><span>2013–2014 sample data</span></div>
+    </header>
+
+    <main id="dashboard">
+      <section class="hero" aria-labelledby="page-title">
+        <div class="hero-copy">
+          <p class="eyebrow"><span aria-hidden="true"></span> Portfolio project</p>
+          <h1 id="page-title">Financial Performance Analysis</h1>
+          <p class="hero-description">I used Excel and Power BI to compare sales, discounts, and gross profit across five countries.</p>
+        </div>
+        <div class="year-comparison" aria-label="Full dataset: 2014 compared with 2013">
+          <span class="comparison-label">2014 vs. 2013</span>
+          <div class="comparison-grid">
+            <div><strong class="decrease">−17.6%</strong><span>Net revenue</span></div>
+            <div><strong class="increase">+9.9%</strong><span>Units sold</span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="filter-panel" aria-label="Dashboard filters">
+        <form id="filters" autocomplete="off">
+          <label class="filter"><span>Year</span><select id="year-filter" data-filter="year" aria-label="Year"></select></label>
+          <label class="filter"><span>Country</span><select id="country-filter" data-filter="country" aria-label="Country"></select></label>
+          <label class="filter"><span>Segment</span><select id="segment-filter" data-filter="segment" aria-label="Segment"></select></label>
+          <label class="filter"><span>Product</span><select id="product-filter" data-filter="product" aria-label="Product"></select></label>
+          <label class="filter"><span>Discount band</span><select id="band-filter" data-filter="band" aria-label="Discount band"></select></label>
+          <button class="reset-button" type="button" id="reset-filters">
+            <svg aria-hidden="true" viewBox="0 0 20 20" fill="none"><path d="M4.4 7.2A6.1 6.1 0 1 1 4 12m.4-4.8V3.4m0 3.8h3.9" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            Reset filters
+          </button>
+        </form>
+      </section>
+      <div class="section-line">
+        <h2>Key figures</h2>
+        <p id="result-status" aria-live="polite"><span class="status-dot" aria-hidden="true"></span><span id="result-text"></span></p>
+      </div>
+
+      <section class="kpi-grid" aria-label="Financial indicators">
+        <article class="kpi kpi-primary">
+          <div class="kpi-label"><span class="metric-dot mint"></span>Net revenue</div>
+          <div class="kpi-value" id="kpi-revenue">—</div>
+          <div class="kpi-note">Sales after discounts</div>
+        </article>
+        <article class="kpi">
+          <div class="kpi-label"><span class="metric-dot mint"></span>Gross profit</div>
+          <div class="kpi-value" id="kpi-profit">—</div>
+          <div class="kpi-note">Net revenue less COGS</div>
+        </article>
+        <article class="kpi">
+          <div class="kpi-label"><span class="metric-dot violet"></span>Gross margin</div>
+          <div class="kpi-value" id="kpi-margin">—</div>
+          <div class="kpi-note">Gross profit ÷ net revenue</div>
+        </article>
+        <article class="kpi">
+          <div class="kpi-label"><span class="metric-dot violet"></span>Units sold</div>
+          <div class="kpi-value" id="kpi-units">—</div>
+          <div class="kpi-note">Total sales volume</div>
+        </article>
+        <article class="kpi">
+          <div class="kpi-label"><span class="metric-dot slate"></span>Gross sales</div>
+          <div class="kpi-value" id="kpi-gross">—</div>
+          <div class="kpi-note">Sales before discounts</div>
+        </article>
+        <article class="kpi">
+          <div class="kpi-label"><span class="metric-dot amber"></span>Discounts</div>
+          <div class="kpi-value" id="kpi-discount">—</div>
+          <div class="kpi-note" id="kpi-discount-note">Share of gross sales</div>
+        </article>
+      </section>
+
+      <div class="chart-row">
+        <section class="panel trend-panel" aria-labelledby="trend-title">
+          <div class="panel-header">
+            <div><h2 id="trend-title">Monthly performance</h2><p class="panel-sub" id="trend-description">Net revenue by month</p></div>
+            <div class="switch" id="trend-options" role="group" aria-label="Trend metric">
+              <button type="button" data-metric="revenue" aria-pressed="true">Revenue</button>
+              <button type="button" data-metric="profit" aria-pressed="false">Gross profit</button>
+              <button type="button" data-metric="units" aria-pressed="false">Units</button>
+            </div>
+          </div>
+          <div class="chart-key" id="trend-legend" aria-label="Chart legend"></div>
+          <div class="plot" id="trend-plot">
+            <svg id="trend-chart" aria-label="Monthly trend"></svg>
+            <div class="chart-tooltip" id="chart-tooltip" role="tooltip" hidden></div>
+            <div class="chart-empty" id="trend-empty" hidden>No records match these filters.</div>
+          </div>
+        </section>
+
+        <section class="panel breakdown-panel" aria-labelledby="breakdown-title">
+          <div class="panel-header">
+            <div><h2 id="breakdown-title">Performance breakdown</h2><p class="panel-sub">Select a bar to filter the dashboard</p></div>
+            <div class="switch" id="breakdown-options" role="group" aria-label="Breakdown dimension">
+              <button type="button" data-group="product" aria-pressed="true">Product</button>
+              <button type="button" data-group="segment" aria-pressed="false">Segment</button>
+              <button type="button" data-group="country" aria-pressed="false">Country</button>
+            </div>
+          </div>
+          <div class="chart-key"><span><i class="key-dot profit-color"></i>Gross profit</span><span><i class="key-dot cost-color"></i>COGS</span></div>
+          <div id="breakdown-bars" class="breakdown-bars"></div>
+        </section>
+      </div>
+
+      <div class="analysis-row">
+        <section class="panel discount-panel" aria-labelledby="discount-title">
+          <div class="panel-header">
+            <div><h2 id="discount-title">Discounts &amp; profitability</h2><p class="panel-sub">Compare sales and profit across discount bands.</p></div>
+          </div>
+          <div class="table-scroll" tabindex="0" aria-label="Discount results table">
+            <table>
+              <caption class="sr-only">Discount performance for the selected filters</caption>
+              <thead><tr><th scope="col">Band</th><th scope="col">Units sold</th><th scope="col">Gross sales</th><th scope="col">Discounts</th><th scope="col">Revenue</th><th scope="col">Gross profit</th><th scope="col">Margin</th></tr></thead>
+              <tbody id="discount-rows"></tbody>
+              <tfoot id="discount-total"></tfoot>
+            </table>
+          </div>
+        </section>
+
+        <section class="panel findings-panel" aria-labelledby="findings-title">
+          <div class="panel-header">
+            <div><h2 id="findings-title">Insights &amp; recommendations</h2><p class="panel-sub">Findings from the full 2013–2014 sample</p></div>
+          </div>
+          <ol class="findings">
+            <li class="finding">
+              <span class="finding-num" aria-hidden="true">01</span>
+              <div>
+                <h3>More units sold, less revenue</h3>
+                <p>Revenue fell <strong>17.6%</strong> in 2014, even as units sold rose <strong>9.9%</strong>.</p>
+                <p class="recommendation">I’d start with Government, where revenue fell <strong>$36.4M</strong>, and compare units and revenue per unit for Amarilla and VTT.</p>
+              </div>
+            </li>
+            <li class="finding">
+              <span class="finding-num" aria-hidden="true">02</span>
+              <div>
+                <h3>Two products accounted for 75% of gross profit</h3>
+                <p>VTT and Amarilla led on profit, but VTT revenue fell <strong>$25.6M</strong> in 2014.</p>
+                <p class="recommendation">I’d review VTT in the United States and Canada first. They accounted for about <strong>$15M</strong> of its decline.</p>
+              </div>
+            </li>
+            <li class="finding">
+              <span class="finding-num" aria-hidden="true">03</span>
+              <div>
+                <h3>The 7% band recorded the most gross profit</h3>
+                <p>The 10% band sold the most units, but gross profit was <strong>$58.15M</strong> versus <strong>$75.34M</strong> at 7%.</p>
+                <p class="recommendation">I’d test both rates on the same product in the same market and compare total gross profit.</p>
+              </div>
+            </li>
+          </ol>
+        </section>
+      </div>
+      <noscript><p class="noscript-message">Enable JavaScript to use the filters and charts. The findings above summarize the full sample.</p></noscript>
+    </main>
+    <footer class="site-footer">
+      <p><strong>Source:</strong> Financial Sample workbook · 1,064 sales records</p>
+      <details>
+        <summary>Metric definitions</summary>
+        <p>Net revenue is gross sales less discounts. Gross profit subtracts cost of goods sold (COGS) from net revenue. Gross margin is total gross profit divided by total net revenue. The discount rate is total discounts divided by gross sales.</p>
+      </details>
+    </footer>
+  </div>
+  <script id="financial-data" type="application/json">{"dimensions":{"year":["2013","2014"],"country":["Canada","France","Germany","Mexico","United States"],"segment":["Channel Partners","Enterprise","Government","Midmarket","Small Business"],"product":["Amarilla","Carretera","Montana","Paseo","VTT","Velo"],"band":[{"name":"None","rate":0},{"name":"Low","rate":0.05},{"name":"Medium","rate":0.07},{"name":"High","rate":0.1}]},"rows":[[0,0,0,0,4,2,4056,175219.2,12265.344,48672],[0,0,2,0,4,1,3099,133876.8,6693.84,37188],[0,0,4,0,4,2,2445,105624,7393.68,29340],[0,0,1,0,4,3,2168,93657.6,9365.76,26016],[0,2,2,0,5,0,2701,116683.2,0,32412],[0,2,1,0,5,2,2459,106228.8,7436.016,29508],[0,2,4,0,5,1,1831,79099.2,3954.96,21972],[0,2,0,0,5,2,748,32313.6,2261.952,8976],[0,2,3,0,5,3,625,27000,2700,7500],[0,3,0,0,0,3,4401,190123.2,19012.32,52812],[0,3,2,0,4,0,3548,153273.6,0,42576],[0,3,4,0,0,0,2441,105451.2,0,29292],[0,3,3,0,4,1,2395,103464,5173.2,28740],[0,3,1,0,4,2,2173,93873.6,6571.152,26076],[0,4,0,0,4,3,2636,113875.2,11387.52,31632],[0,4,4,0,4,3,2258,97545.6,9754.56,27096],[0,4,1,0,4,1,1083,46785.6,2339.28,12996],[0,4,2,0,4,2,1100,47520,3326.4,13200],[0,5,2,0,5,0,1931,83419.2,0,23172],[0,5,3,0,5,3,755,32616,3261.6,9060],[0,7,2,0,0,3,3218,139017.6,13901.76,38616],[0,7,1,0,0,3,3094,133660.8,13366.08,37128],[0,7,4,0,0,0,2676,115603.2,0,32112],[0,7,3,0,0,2,1404,60652.8,4245.696,16848],[0,8,0,0,0,3,2761,119275.2,11927.52,33132],[0,8,1,0,4,2,2234,96508.8,6755.616,26808],[0,8,2,0,4,2,2215,95688,6698.16,26580],[0,8,4,0,0,1,1989,85924.8,4296.24,23868],[0,8,3,0,4,3,1005,43416,4341.6,12060],[0,8,1,0,1,1,3339,36061.2,1803.06,10017],[0,9,0,0,1,2,2299,24829.2,1738.044,6897],[0,9,1,0,1,3,1198,12938.4,1293.84,3594],[0,9,2,0,1,1,766,8272.8,413.64,2298],[0,9,4,0,1,3,386,4168.8,416.88,1158],[0,9,3,0,1,2,367,3963.6,277.452,1101],[0,9,0,0,3,2,2299,82764,5793.48,22990],[0,9,2,0,3,1,766,27576,1378.8,7660],[0,9,1,0,3,3,1198,43128,4312.8,11980],[0,9,3,0,3,2,432,15552,1088.64,4320],[0,9,4,0,3,3,123,4428,442.8,1230],[0,9,4,0,0,3,3643,157377.6,15737.76,43716],[0,9,1,0,0,3,1741,75211.2,7521.12,20892],[0,9,2,0,0,3,590,25488,2548.8,7080],[0,9,3,0,0,3,513,22161.6,2216.16,6156],[0,9,2,0,5,3,590,25488,2548.8,7080],[0,9,3,0,5,3,513,22161.6,2216.16,6156],[0,10,3,0,3,2,2763,99468,6962.76,27630],[0,10,1,0,3,1,1785,64260,3213,17850],[0,10,2,0,3,2,1775,63900,4473,17750],[0,10,4,0,3,0,912,32832,0,9120],[0,10,0,0,3,3,2222,79992,7999.2,22220],[0,11,4,0,0,3,2015,87048,8704.8,24180],[0,11,2,0,0,3,1770,76464,7646.4,21240],[0,11,3,0,0,2,1375,59400,4158,16500],[0,11,1,0,0,2,306,13219.2,925.344,3672],[0,11,0,0,1,1,908,9806.4,490.32,2724],[0,11,0,0,5,2,3039,131284.8,9189.936,36468],[0,11,3,0,5,1,1355,58536,2926.8,16260],[0,11,1,0,5,1,1319,56980.8,2849.04,15828],[0,11,2,0,5,3,1266,54691.2,5469.12,15192],[0,11,4,0,5,3,1143,49377.6,4937.76,13716],[1,0,0,0,4,2,3171,136987.2,9589.104,38052],[1,0,2,0,4,1,3450,149040,7452,41400],[1,0,4,0,4,2,1808,78105.6,5467.392,21696],[1,0,1,0,4,3,5257,227102.4,22710.24,63084],[1,0,3,0,2,2,1455,26190,1833.3,7275],[1,1,4,0,1,1,3466,37432.8,1871.64,10398],[1,1,1,0,1,2,2433,26276.4,1839.348,7299],[1,1,0,0,1,3,2442,26373.6,2637.36,7326],[1,1,2,0,1,2,3011,32518.8,2276.316,9033],[1,1,3,0,1,2,1979,21373.2,1496.124,5937],[1,2,2,0,5,0,1026,44323.2,0,12312],[1,2,1,0,5,2,2833,122385.6,8566.992,33996],[1,2,4,0,5,1,2322,100310.4,5015.52,27864],[1,2,0,0,5,2,327,14126.4,988.848,3924],[1,2,3,0,5,3,770,33264,3326.4,9240],[1,3,0,0,0,3,5000,216000,21600,60000],[1,3,2,0,4,0,4627,199886.4,0,55524],[1,3,4,0,0,0,5582,241142.4,0,66984],[1,3,3,0,4,1,2101,90763.2,4538.16,25212],[1,3,1,0,4,2,1847,79790.4,5585.328,22164],[1,4,0,0,4,3,2227,96206.4,9620.64,26724],[1,4,4,0,4,3,2672,115430.4,11543.04,32064],[1,4,1,0,4,1,1192,51494.4,2574.72,14304],[1,4,2,0,4,2,1123,48513.6,3395.952,13476],[1,4,3,0,2,3,304,5472,547.2,1520],[1,5,2,0,5,0,2053,88689.6,0,24636],[1,5,3,0,5,3,854,36892.8,3689.28,10248],[1,5,0,0,2,0,3241,58338,0,16205],[1,5,1,0,2,1,1672,30096,1504.8,8360],[1,5,2,0,2,0,1783,32094,0,8915],[1,5,4,0,2,1,1350,24300,1215,6750],[1,5,0,0,3,0,1488,53568,0,14880],[1,5,3,0,2,3,3304,59472,5947.2,16520],[1,5,1,0,3,1,777,27972,1398.6,7770],[1,5,4,0,3,1,2490,89640,4482,24900],[1,6,0,0,3,3,832,29952,2995.2,8320],[1,6,1,0,3,3,1061,38196,3819.6,10610],[1,6,4,0,3,1,3182,114552,5727.6,31820],[1,6,2,0,3,0,1788,64368,0,17880],[1,6,3,0,3,3,465,16740,1674,4650],[1,7,2,0,0,3,404,17452.8,1745.28,4848],[1,7,1,0,0,3,3378,145929.6,14592.96,40536],[1,7,4,0,0,0,3247,140270.4,0,38964],[1,7,3,0,0,2,3718,160617.6,11243.232,44616],[1,7,0,0,1,2,3140,33912,2373.84,9420],[1,8,1,0,1,1,3931,42454.8,2122.74,11793],[1,8,4,0,1,1,2533,27356.4,1367.82,7599],[1,8,2,0,1,2,2006,21664.8,1516.536,6018],[1,8,0,1,1,1,3243,35024.4,1751.22,9729],[1,8,3,1,1,2,2313,24980.4,1748.628,6939],[1,9,4,1,0,3,407,17582.4,1758.24,4884],[1,9,1,1,0,3,2046,88387.2,8838.72,24552],[1,9,2,1,0,3,1412,60998.4,6099.84,16944],[1,9,3,1,0,3,1117,48254.4,4825.44,13404],[1,9,2,1,5,3,1282,55382.4,5538.24,15384],[1,9,3,1,5,3,603,26049.6,2604.96,7236],[1,9,0,1,1,1,1629,17593.2,879.66,4887],[1,9,4,1,3,3,697,25092,2509.2,6970],[1,9,0,1,3,1,298,10728,536.4,2980],[1,9,1,1,3,3,1690,60840,6084,16900],[1,10,4,1,2,2,2660,47880,3351.6,13300],[1,10,1,1,2,2,1977,35586,2491.02,9885],[1,10,2,1,2,2,3072,55296,3870.72,15360],[1,10,0,1,2,2,3072,55296,3870.72,15360],[1,10,3,1,2,1,627,11286,564.3,3135],[1,11,0,0,5,2,1608,69465.6,4862.592,19296],[1,11,3,0,5,1,668,28857.6,1442.88,8016],[1,11,1,0,5,1,1411,60955.2,3047.76,16932],[1,11,2,0,5,3,818,35337.6,3533.76,9816],[1,11,4,0,5,3,342,14774.4,1477.44,4104],[1,11,0,0,3,2,792,28512,1995.84,7920],[1,11,3,0,3,1,668,24048,1202.4,6680],[1,11,1,0,3,1,1411,50796,2539.8,14110],[1,11,2,0,3,3,350,12600,1260,3500],[1,11,4,0,3,3,1317,47412,4741.2,13170],[0,0,2,1,0,3,3956,1780200,178020,494500],[0,0,1,1,0,2,2484,1117800,78246,310500],[0,0,0,1,0,3,2074,933300,93330,259250],[0,0,4,1,0,3,724,325800,32580,90500],[0,0,3,1,4,3,693,311850,31185,86625],[0,1,4,1,5,2,3444,198374.4,13886.208,55104],[0,1,3,1,5,3,1969,134679.6,13467.96,37411],[0,1,0,1,5,2,1190,42840,2998.8,11900],[0,1,2,1,5,2,1009,43588.8,3051.216,12108],[0,2,4,1,3,2,3740,134640,9424.8,37400],[0,2,1,1,3,2,2981,107316,7512.12,29810],[0,2,0,1,3,1,2218,79848,3992.4,22180],[0,2,3,1,3,2,1393,50148,3510.36,13930],[0,2,2,1,3,1,994,35784,1789.2,9940],[0,3,2,1,0,0,5274,2373300,0,659250],[0,3,1,1,1,1,5304,57283.2,2864.16,15912],[0,3,4,1,1,3,4307,46515.6,4651.56,12921],[0,3,3,1,0,1,1343,604350,30217.5,167875],[0,3,0,1,1,1,928,10022.4,501.12,2784],[0,4,4,1,0,3,3555,1599750,159975,444375],[0,4,2,1,0,1,2845,1280250,64012.5,355625],[0,4,0,1,0,2,2056,925200,64764,257000],[0,4,1,1,0,3,1791,805950,80595,223875],[0,4,3,1,4,3,426,191700,19170,53250],[0,5,2,1,4,1,1963,883350,44167.5,245375],[0,5,2,1,3,1,1963,70668,3533.4,19630],[0,5,0,1,3,3,1979,71244,7124.4,19790],[0,5,0,1,4,3,1979,890550,89055,247375],[0,5,1,1,4,1,984,442800,22140,123000],[0,5,1,1,3,1,984,35424,1771.2,9840],[0,5,4,1,4,1,909,409050,20452.5,113625],[0,5,4,1,3,1,909,32724,1636.2,9090],[0,5,3,1,4,1,828,372600,18630,103500],[0,5,3,1,3,1,828,29808,1490.4,8280],[0,6,4,1,2,2,4534,81612,5712.84,22670],[0,6,2,1,3,2,4391,158076,11065.32,43910],[0,6,1,1,3,1,3735,134460,6723,37350],[0,6,0,1,2,0,3332,59976,0,16660],[0,6,3,1,3,1,2279,82044,4102.2,22790],[0,7,2,1,1,3,3459,37357.2,3735.72,10377],[0,7,3,1,1,2,1925,20790,1455.3,5775],[0,7,1,1,1,3,1468,15854.4,1585.44,4404],[0,8,0,1,1,3,2416,26092.8,2609.28,7248],[0,8,2,1,0,2,994,447300,31311,124250],[0,8,1,1,1,3,1023,11048.4,1104.84,3069],[0,8,3,1,0,3,947,426150,42615,118375],[0,8,4,1,1,1,330,3564,178.2,990],[0,8,2,1,5,2,2609,112708.8,7889.616,31308],[0,8,3,1,5,2,2638,189936,13295.52,52760],[0,8,4,1,5,3,1995,86184,8618.4,23940],[0,8,1,1,5,3,829,41781.6,4178.16,11606],[0,9,3,1,3,1,2145,77220,3861,21450],[0,9,2,1,3,1,809,29124,1456.2,8090],[0,9,4,1,2,1,663,11934,596.7,3315],[0,9,1,1,3,2,704,25344,1774.08,7040],[0,9,0,1,2,0,345,6210,0,1725],[0,9,1,1,5,2,345,14904,1043.28,4140],[0,9,4,1,5,1,123,5756.4,287.82,1599],[0,9,2,1,5,1,422,21268.8,1063.44,5908],[0,9,0,1,5,0,345,149040,0,41400],[0,9,3,1,5,1,234,11793.6,589.68,3276],[0,9,1,1,1,3,3051,32950.8,3295.08,9153],[0,9,1,1,3,3,3051,109836,10983.6,30510],[0,9,3,1,1,3,2695,29106,2910.6,8085],[0,9,3,1,3,3,2695,97020,9702,26950],[0,9,0,1,3,1,2511,90396,4519.8,25110],[0,9,2,1,1,3,1356,14644.8,1464.48,4068],[0,9,2,1,3,3,1356,48816,4881.6,13560],[0,9,4,1,3,2,1076,38736,2711.52,10760],[0,9,4,1,5,2,1076,38736,2711.52,10760],[0,10,0,1,4,3,2954,1329300,132930,369250],[0,10,2,1,2,2,2500,45000,3150,12500],[0,10,1,1,2,2,1857,33426,2339.82,9285],[0,10,4,1,2,3,1804,32472,3247.2,9020],[0,10,3,1,2,1,1660,29880,1494,8300],[0,10,0,1,4,3,3161,1422450,142245,395125],[0,10,4,1,4,3,2984,1342800,134280,373000],[0,10,1,1,4,1,2180,981000,49050,272500],[0,10,3,1,4,2,1096,493200,34524,137000],[0,10,2,1,4,3,690,310500,31050,86250],[0,11,3,1,1,3,2821,30466.8,3046.68,8463],[0,11,4,1,5,3,2438,114098.4,11409.84,31694],[0,11,1,1,1,3,1482,16005.6,1600.56,4446],[0,11,0,1,5,3,1916,165542.4,16554.24,45984],[0,11,2,1,1,2,887,9579.6,670.572,2661],[0,11,4,1,2,2,3496,62928,4404.96,17480],[0,11,0,1,4,1,3411,1534950,76747.5,426375],[0,11,4,1,3,2,3496,125856,8809.92,34960],[0,11,0,1,3,1,3411,122796,6139.8,34110],[0,11,2,1,2,1,2133,38394,1919.7,10665],[0,11,2,1,3,1,2133,76788,3839.4,21330],[0,11,1,1,2,1,1609,28962,1448.1,8045],[0,11,1,1,3,1,1609,57924,2896.2,16090],[0,11,3,1,2,1,1423,25614,1280.7,7115],[0,11,3,1,3,1,1423,51228,2561.4,14230],[1,0,2,1,0,3,2269,1021050,102105,283625],[1,0,4,1,2,3,4158,74844,7484.4,20790],[1,0,2,1,2,3,3757,67626,6762.6,18785],[1,0,1,1,0,2,991,445950,31216.5,123875],[1,0,0,1,0,3,1045,470250,47025,130625],[1,0,3,1,5,0,2170,54684,0,15190],[1,0,4,1,0,3,879,395550,39555,109875],[1,0,3,1,4,3,744,334800,33480,93000],[1,1,4,1,5,2,1879,108230.4,7576.128,30064],[1,1,1,1,0,0,3617,3385512,0,940420],[1,1,3,1,5,3,3610,246924,24692.4,68590],[1,1,3,1,0,1,2059,1927224,96361.2,535340],[1,1,0,1,0,3,2442,2285712,228571.2,634920],[1,1,0,1,5,2,3734,134424,9409.68,37340],[1,1,2,1,0,2,1237,1157832,81048.24,321620],[1,1,2,1,5,2,1762,76118.4,5328.288,21144],[1,1,1,0,5,0,1453,627696,0,174360],[1,2,3,0,1,1,3247,35067.6,1753.38,9741],[1,2,4,0,4,3,1577,39740.4,3974.04,11039],[1,2,1,0,4,3,2064,52012.8,5201.28,14448],[1,2,4,0,3,2,1948,70128,4908.96,19480],[1,2,0,0,4,1,3930,99036,4951.8,27510],[1,2,0,0,1,3,1731,18694.8,1869.48,5193],[1,2,1,0,3,2,1199,43164,3021.48,11990],[1,2,2,0,1,3,3128,33782.4,3378.24,9384],[1,2,0,0,3,1,1152,41472,2073.6,11520],[1,2,3,0,3,2,1914,68904,4823.28,19140],[1,2,2,0,3,1,1451,52236,2611.8,14510],[1,3,2,0,0,0,3018,1358100,0,377250],[1,3,1,0,1,1,5550,59940,2997,16650],[1,3,4,0,1,3,2275,24570,2457,6825],[1,3,2,0,2,3,4528,81504,8150.4,22640],[1,3,1,0,5,1,1563,112536,5626.8,31260],[1,3,0,0,5,1,5081,365832,18291.6,101620],[1,3,3,0,2,2,5063,91134,6379.38,25315],[1,3,3,0,0,1,3449,1552050,77602.5,431125],[1,3,4,0,4,2,1398,1258200,88074,349500],[1,3,0,0,1,1,1764,19051.2,952.56,5292],[1,4,4,0,0,3,2364,1063800,106380,295500],[1,4,2,1,0,1,3734,1680300,84015,466750],[1,4,0,1,0,2,1142,513900,35973,142750],[1,4,1,0,0,3,2152,968400,96840,269000],[1,4,3,0,4,3,458,206100,20610,57250],[1,5,2,0,3,0,2487,89532,0,24870],[1,5,3,0,4,2,1308,32961.6,2307.312,9156],[1,5,1,0,5,2,1958,845856,59209.92,234960],[1,5,4,0,5,2,1955,49266,3448.62,13685],[1,5,2,0,0,2,3817,274824,19237.68,76340],[1,5,4,0,0,2,1424,102528,7176.96,28480],[1,5,3,0,1,3,1672,18057.6,1805.76,5016],[1,5,3,0,3,3,1288,46368,4636.8,12880],[1,5,1,0,0,3,1150,28980,2898,8050],[1,5,0,1,0,2,1288,32457.6,2272.032,9016],[1,5,2,1,5,2,1478,37245.6,2607.192,10346],[1,5,2,1,5,0,3066,1324512,0,367920],[1,5,3,1,0,2,1308,94176,6592.32,26160],[1,5,4,1,3,2,890,32040,2242.8,8900],[1,5,2,1,4,1,890,400500,20025,111250],[1,5,2,1,3,1,2053,73908,3695.4,20530],[1,5,0,1,3,3,2020,72720,7272,20200],[1,5,0,1,4,3,2070,931500,93150,258750],[1,5,0,1,0,2,2070,149040,10432.8,41400],[1,5,3,1,5,2,915,23058,1614.06,6405],[1,5,4,1,5,2,1958,845856,59209.92,234960],[1,5,1,1,5,3,572,14414.4,1441.44,4004],[1,5,0,1,5,2,1551,39085.2,2735.964,10857],[1,5,1,1,4,1,1478,665100,33255,184750],[1,5,1,1,3,1,1019,36684,1834.2,10190],[1,5,4,1,4,1,1019,458550,22927.5,127375],[1,5,4,1,3,1,940,33840,1692,9400],[1,5,3,1,4,1,940,423000,21150,117500],[1,5,3,1,3,1,854,30744,1537.2,8540],[1,6,4,1,2,2,2206,39708,2779.56,11030],[1,6,3,1,0,2,4768,120153.6,8410.752,33376],[1,6,2,1,3,2,2202,79272,5549.04,22020],[1,6,1,1,3,1,3227,116172,5808.6,32270],[1,6,0,1,2,0,3924,70632,0,19620],[1,6,3,1,5,3,3499,1511568,151156.8,419880],[1,6,2,1,5,2,1822,787104,55097.28,218640],[1,6,3,1,3,1,1038,37368,1868.4,10380],[1,6,0,1,4,3,2387,171864,17186.4,47740],[1,6,1,1,5,3,826,356832,35683.2,99120],[1,6,4,1,4,2,630,45360,3175.2,12600],[1,7,2,1,1,3,2042,22053.6,2205.36,6126],[1,7,4,1,5,2,1245,89640,6274.8,24900],[1,7,4,1,4,3,1463,1316700,131670,365750],[1,7,3,1,1,2,3685,39798,2785.86,11055],[1,7,1,1,5,2,2013,144936,10145.52,40260],[1,7,3,1,4,1,2064,1857600,92880,516000],[1,7,1,1,1,3,2148,23198.4,2319.84,6444],[1,7,2,1,5,2,1530,110160,7711.2,30600],[1,7,4,1,5,0,2467,1065744,0,296040],[1,7,0,1,5,1,2281,114962.4,5748.12,31934],[1,8,2,1,5,2,875,37800,2646,10500],[1,8,3,1,5,2,2735,196920,13784.4,54700],[1,8,1,1,0,2,2765,2588040,181162.8,718900],[1,8,4,1,5,3,3777,163166.4,16316.64,45324],[1,8,2,1,0,1,2087,1953432,97671.6,542620],[1,8,4,1,0,2,2497,2337192,163603.44,649220],[1,8,3,1,0,2,2714,2540304,177821.28,705640],[1,8,1,1,5,3,2820,142128,14212.8,39480],[1,8,0,1,5,2,722,33789.6,2365.272,9386],[1,9,1,1,0,3,1955,49266,4926.6,13685],[1,9,4,1,0,0,1819,45838.8,0,12733],[1,9,1,1,1,3,1313,14180.4,1418.04,3939],[1,9,0,1,5,2,1600,691200,48384,192000],[1,9,1,1,3,3,1502,54072,5407.2,15020],[1,9,2,1,4,1,1531,1377900,68895,382750],[1,9,3,1,1,3,3778,40802.4,4080.24,11334],[1,9,3,1,3,3,2826,101736,10173.6,28260],[1,9,0,1,3,1,2826,101736,5086.8,28260],[1,9,4,1,5,3,2632,1137024,113702.4,315840],[1,9,1,1,5,2,1282,92304,6461.28,25640],[1,9,1,1,4,1,2589,2330100,116505,647250],[1,9,4,1,5,1,2854,205488,10274.4,57080],[1,9,2,1,1,3,701,7570.8,757.08,2103],[1,9,3,1,4,1,701,630900,31545,175250],[1,9,2,1,3,3,1824,65664,6566.4,18240],[1,9,4,1,3,2,603,21708,1519.56,6030],[1,9,4,1,5,2,521,18756,1312.92,5210],[1,9,0,1,0,2,1117,1045512,73185.84,290420],[1,9,2,1,4,2,1655,41706,2919.42,11585],[1,9,3,1,5,3,455,32760,3276,9100],[1,9,0,1,5,1,1489,75045.6,3752.28,20846],[1,10,3,1,0,2,2084,150048,10503.36,41680],[1,10,3,1,3,3,2216,79776,7977.6,22160],[1,10,4,1,3,3,1560,56160,5616,15600],[1,10,2,1,0,2,1774,127728,8940.96,35480],[1,10,4,1,0,1,1987,143064,7153.2,39740],[1,10,2,1,5,3,1612,40622.4,4062.24,11284],[1,10,0,1,4,3,3498,1574100,157410,437250],[1,10,0,1,0,2,3318,238896,16722.72,66360],[1,10,4,1,4,3,1456,655200,65520,182000],[1,10,1,1,0,1,3131,225432,11271.6,62620],[1,10,0,1,3,3,1222,43992,4399.2,12220],[1,10,1,1,4,1,904,406800,20340,113000],[1,10,0,1,5,3,2282,57506.4,5750.64,15974],[1,10,3,1,5,2,2367,59648.4,4175.388,16569],[1,10,2,1,3,3,1740,62640,6264,17400],[1,10,3,1,4,2,451,202950,14206.5,56375],[1,10,2,1,4,3,702,315900,31590,87750],[1,11,0,1,4,2,2379,59950.8,4196.556,16653],[1,11,2,1,4,3,2068,148896,14889.6,41360],[1,11,4,1,2,2,2001,36018,2521.26,10005],[1,11,0,1,4,1,3672,1652400,82620,459000],[1,11,4,1,3,2,3582,128952,9026.64,35820],[1,11,0,1,3,1,3672,132192,6609.6,36720],[1,11,3,1,4,3,3582,257904,25790.4,71640],[1,11,2,1,2,1,1630,29340,1467,8150],[1,11,2,1,3,1,2232,80352,4017.6,22320],[1,11,0,1,5,2,2232,56246.4,3937.248,15624],[1,11,1,1,2,1,792,14256,712.8,3960],[1,11,1,1,3,1,1679,60444,3022.2,16790],[1,11,3,1,2,1,1679,30222,1511.1,8395],[1,11,4,1,4,2,1482,37346.4,2614.248,10374],[1,11,3,1,3,1,1106,39816,1990.8,11060],[1,11,3,1,4,2,1482,37346.4,2614.248,10374],[1,11,4,1,1,1,1317,14223.6,711.18,3951],[1,11,4,1,3,1,342,12312,615.6,3420],[0,0,3,2,3,2,3021,108756,7612.92,30210],[0,0,0,2,2,3,2784,50112,5011.2,13920],[0,0,3,2,0,3,3286,236592,23659.2,65720],[0,0,1,2,2,2,1731,31158,2181.06,8655],[0,0,4,2,2,3,1228,22104,2210.4,6140],[0,0,2,2,2,3,958,17244,1724.4,4790],[0,0,3,2,5,0,1866,47023.2,0,13062],[0,0,1,2,1,3,3152,34041.6,3404.16,9456],[0,0,0,2,1,0,2023,21848.4,0,6069],[0,0,2,2,1,0,1651,17830.8,0,4953],[0,1,1,2,2,3,154,2772,277.2,770],[0,1,1,2,0,0,3438,3217968,0,893880],[0,1,3,2,0,1,2331,2181816,109090.8,606060],[0,1,0,2,0,3,2800,2620800,262080,728000],[0,1,2,2,0,2,1688,1579968,110597.76,438880],[0,2,3,2,4,3,3629,91450.8,9145.08,25403],[0,2,4,2,1,2,2201,23770.8,1663.956,6603],[0,2,1,2,1,3,2238,24170.4,2417.04,6714],[0,2,3,2,1,1,1513,16340.4,817.02,4539],[0,2,4,1,4,3,1974,49744.8,4974.48,13818],[0,2,1,1,4,3,1864,46972.8,4697.28,13048],[0,2,0,1,4,1,1658,41781.6,2089.08,11606],[0,2,0,1,1,3,1154,12463.2,1246.32,3462],[0,2,2,1,1,3,990,10692,1069.2,2970],[0,2,2,1,4,1,329,8290.8,414.54,2303],[0,3,2,1,2,3,1499,26982,2698.2,7495],[0,3,1,1,5,1,4830,347760,17388,96600],[0,3,0,1,5,1,4813,346536,17326.8,96260],[0,3,3,1,2,2,1225,22050,1543.5,6125],[0,3,4,1,4,2,1689,1520100,106407,422250],[0,3,0,1,4,1,1179,1061100,53055,294750],[0,3,4,1,5,3,758,54576,5457.6,15160],[0,3,1,1,4,2,718,646200,45234,179500],[0,3,2,1,1,1,3225,34830,1741.5,9675],[0,3,3,1,1,3,3224,34819.2,3481.92,9672],[0,4,3,1,3,3,3564,128304,12830.4,35640],[0,4,4,2,2,3,2891,52038,5203.8,14455],[0,4,1,2,2,2,2083,37494,2624.58,10415],[0,4,2,2,2,2,1825,32850,2299.5,9125],[0,4,3,2,0,3,2549,183528,18352.8,50980],[0,4,0,2,2,3,250,4500,450,1250],[0,4,3,2,5,1,453,11415.6,570.78,3171],[0,4,4,2,1,3,2179,23533.2,2353.32,6537],[0,4,1,2,1,2,1954,21103.2,1477.224,5862],[0,5,0,2,3,3,3290,118440,11844,32900],[0,5,4,2,0,2,3634,91576.8,6410.376,25438],[0,5,2,2,4,2,2923,73659.6,5156.172,20461],[0,5,0,2,5,3,3290,1421280,142128,394800],[0,5,1,2,3,2,1870,67320,4712.4,18700],[0,5,1,2,0,0,2374,170928,0,47480],[0,5,2,2,3,0,1258,45288,0,12580],[0,5,3,2,4,2,1873,47199.6,3303.972,13111],[0,5,1,2,5,2,1870,807840,56548.8,224400],[0,5,4,2,5,2,3634,91576.8,6410.376,25438],[0,5,2,2,0,2,1708,122976,8608.32,34160],[0,5,4,2,0,2,1603,115416,8079.12,32060],[0,5,3,2,1,3,1108,11966.4,1196.64,3324],[0,5,3,2,3,3,1108,39888,3988.8,11080],[0,5,1,2,0,3,1488,37497.6,3749.76,10416],[0,5,0,2,0,2,1419,35758.8,2503.116,9933],[0,5,2,2,5,2,2923,73659.6,5156.172,20461],[0,5,2,2,5,0,1258,543456,0,150960],[0,5,3,2,0,2,1298,93456,6541.92,25960],[0,5,4,0,3,2,753,27108,1897.56,7530],[0,5,0,0,0,2,885,63720,4460.4,17700],[0,5,3,0,5,2,1873,47199.6,3303.972,13111],[0,5,4,0,5,2,753,325296,22770.72,90360],[0,5,1,0,5,3,1488,37497.6,3749.76,10416],[0,5,0,0,5,2,1419,35758.8,2503.116,9933],[0,5,1,0,2,0,2374,42732,0,11870],[0,6,1,0,0,3,4277,107780.4,10778.04,29939],[0,6,0,0,3,3,2631,94716,9471.6,26310],[0,6,2,0,0,0,2108,53121.6,0,14756],[0,6,3,0,0,2,2104,53020.8,3711.456,14728],[0,6,3,2,5,3,1744,753408,75340.8,209280],[0,6,2,2,5,2,1634,705888,49412.16,196080],[0,6,0,2,4,3,1082,77904,7790.4,21640],[0,6,1,2,5,3,799,345168,34516.8,95880],[0,6,4,2,4,2,546,39312,2751.84,10920],[0,6,3,2,2,3,2819,50742,5074.2,14095],[0,7,4,2,5,2,3540,254880,17841.6,70800],[0,7,4,2,4,3,3509,3158100,315810,877250],[0,7,1,2,5,2,1974,142128,9948.96,39480],[0,7,3,2,4,1,2053,1847700,92385,513250],[0,7,2,2,5,2,1251,90072,6305.04,25020],[0,7,3,2,5,2,761,54792,3835.44,15220],[0,7,0,2,0,2,690,645840,45208.8,179400],[0,7,2,2,4,2,528,475200,33264,132000],[0,7,1,2,4,2,476,428400,29988,119000],[0,8,0,2,4,3,623,560700,56070,155750],[0,8,4,2,4,1,349,314100,15705,87250],[0,8,3,2,1,2,1834,19807.2,1386.504,5502],[0,8,2,2,1,3,442,4773.6,477.36,1326],[0,8,2,2,3,2,2409,60706.8,4249.476,16863],[0,8,0,2,3,2,2349,59194.8,4143.636,16443],[0,8,3,2,3,1,1760,44352,2217.6,12320],[0,8,1,2,3,2,1031,25981.2,1818.684,7217],[0,8,4,2,3,3,380,9576,957.6,2660],[0,8,1,2,0,2,3595,3364920,235544.4,934700],[0,8,2,2,0,1,2384,2231424,111571.2,619840],[0,8,4,2,0,2,2589,2423304,169631.28,673140],[0,8,3,2,0,2,2099,1964664,137526.48,545740],[0,8,0,2,0,3,884,827424,82742.4,229840],[0,8,3,2,3,2,3741,134676,9427.32,37410],[0,9,4,2,4,3,267,19224,1922.4,5340],[0,9,4,2,0,2,727,680472,47633.04,189020],[0,9,2,2,2,3,2992,53856,5385.6,14960],[0,9,2,2,3,3,2992,107712,10771.2,29920],[0,9,1,2,2,2,1757,31626,2213.82,8785],[0,9,3,2,2,3,1715,30870,3087,8575],[0,9,3,2,0,3,344,321984,32198.4,89440],[0,9,1,2,3,2,1757,63252,4427.64,17570],[0,9,3,2,3,3,1715,61740,6174,17150],[0,9,0,2,3,2,1389,50004,3500.28,13890],[0,9,0,2,1,1,2851,30790.8,1539.54,8553],[0,9,4,2,1,3,2996,32356.8,3235.68,8988],[0,9,0,2,2,1,2851,51318,2565.9,14255],[0,9,4,2,2,3,2996,53928,5392.8,14980],[0,9,3,2,2,3,1727,31086,3108.6,8635],[0,9,4,2,3,3,267,9612,961.2,2670],[0,9,1,2,2,2,1403,25254,1767.78,7015],[0,9,2,2,2,2,1159,20862,1460.34,5795],[0,9,0,2,0,3,3418,86133.6,8613.36,23926],[0,9,2,2,5,1,3596,1553472,77673.6,431520],[0,9,3,2,4,2,3361,84697.2,5928.804,23527],[0,9,1,2,5,1,2721,1175472,58773.6,326520],[0,9,3,2,1,1,1746,18856.8,942.84,5238],[0,9,1,2,0,3,2164,54532.8,5453.28,15148],[0,9,4,2,0,0,1429,36010.8,0,10003],[0,9,0,2,5,2,1586,685152,47960.64,190320],[0,9,2,2,4,1,3596,3236400,161820,899000],[0,9,4,2,5,3,1233,532656,53265.6,147960],[0,9,1,2,5,2,2470,177840,12448.8,49400],[0,9,1,2,4,1,2721,2448900,122445,680250],[0,9,4,2,5,1,1958,140976,7048.8,39160],[0,9,3,2,4,1,1746,1571400,78570,436500],[0,9,0,2,0,2,1586,1484496,103914.72,412360],[0,9,2,2,4,2,450,11340,793.8,3150],[0,9,3,2,5,3,1131,81432,8143.2,22620],[0,9,4,2,4,3,1233,1109700,110970,308250],[0,9,1,2,2,2,2470,44460,3112.2,12350],[0,10,3,2,1,3,2706,29224.8,2922.48,8118],[0,10,1,2,1,1,2145,23166,1158.3,6435],[0,10,2,2,1,2,1016,10972.8,768.096,3048],[0,10,4,2,1,2,263,2840.4,198.828,789],[0,10,1,2,3,3,1993,71748,7174.8,19930],[0,10,3,2,0,2,2118,152496,10674.72,42360],[0,10,3,2,3,3,1496,53856,5385.6,14960],[0,10,4,2,3,3,1471,52956,5295.6,14710],[0,10,2,2,0,2,1900,136800,9576,38000],[0,10,4,2,0,1,1545,111240,5562,30900],[0,10,2,2,5,3,3331,83941.2,8394.12,23317],[0,10,0,2,0,2,1398,100656,7045.92,27960],[0,10,1,2,0,1,1176,84672,4233.6,23520],[0,10,0,2,3,3,875,31500,3150,8750],[0,10,0,2,5,3,2260,56952,5695.2,15820],[0,10,3,2,5,2,1666,41983.2,2938.824,11662],[0,10,2,2,3,3,446,16056,1605.6,4460],[0,10,1,2,5,1,799,20134.8,1006.74,5593],[0,10,4,2,5,2,684,17236.8,1206.576,4788],[0,11,2,2,5,2,588,42336,2963.52,11760],[0,11,3,2,5,1,544,39168,1958.4,10880],[0,11,4,2,4,1,266,239400,11970,66500],[0,11,0,2,3,2,1802,64872,4541.04,18020],[0,11,4,2,3,1,2013,50727.6,2536.38,14091],[0,11,1,2,3,2,2136,53827.2,3767.904,14952],[0,11,2,2,3,2,2125,53550,3748.5,14875],[0,11,3,0,3,2,1946,49039.2,3432.744,13622],[0,11,0,0,2,2,1611,28998,2029.86,8055],[0,11,0,0,1,1,3565,38502,1925.1,10695],[0,11,0,0,3,1,3565,128340,6417,35650],[0,11,1,0,1,1,2694,29095.2,1454.76,8082],[0,11,1,0,3,1,2694,96984,4849.2,26940],[0,11,4,0,4,2,3329,239688,16778.16,66580],[0,11,1,0,4,2,3109,78346.8,5484.276,21763],[0,11,2,0,1,0,1891,20422.8,0,5673],[0,11,2,0,3,0,1891,68076,0,18910],[0,11,3,0,1,2,1703,18392.4,1287.468,5109],[0,11,3,2,3,2,1703,61308,4291.56,17030],[0,11,0,2,4,0,2271,163512,0,45420],[0,11,0,2,4,2,1978,49845.6,3489.192,13846],[0,11,2,2,4,3,1914,137808,13780.8,38280],[0,11,3,2,4,3,1541,110952,11095.2,30820],[0,11,0,2,5,2,1978,49845.6,3489.192,13846],[0,11,4,2,4,2,713,17967.6,1257.732,4991],[0,11,3,2,4,2,651,16405.2,1148.364,4557],[0,11,4,2,1,1,343,3704.4,185.22,1029],[0,11,4,2,3,1,343,12348,617.4,3430],[0,11,2,2,4,3,350,8820,882,2450],[0,11,1,2,4,3,366,26352,2635.2,7320],[0,11,4,2,3,2,3329,119844,8389.08,33290],[1,0,3,2,3,2,4594,165384,11576.88,45940],[1,0,0,2,2,3,4263,76734,7673.4,21315],[1,0,3,2,0,3,3194,229968,22996.8,63880],[1,0,1,2,2,2,3252,58536,4097.52,16260],[1,0,1,2,1,3,713,7700.4,770.04,2139],[1,0,0,2,1,0,487,5259.6,0,1461],[1,0,2,2,1,0,2117,22863.6,0,6351],[1,0,4,2,1,2,1724,18619.2,1303.344,5172],[1,0,0,2,3,1,3069,77338.8,3866.94,21483],[1,0,1,2,3,1,5592,140918.4,7045.92,39144],[1,0,2,2,3,2,5188,130737.6,9151.632,36316],[1,0,4,2,3,3,1791,45133.2,4513.32,12537],[1,1,2,2,3,3,1246,44856,4485.6,12460],[1,1,4,2,3,3,3555,127980,12798,35550],[1,1,4,2,0,3,2537,2374632,237463.2,659620],[1,1,1,2,3,2,337,12132,849.24,3370],[1,1,2,2,2,1,1266,22788,1139.4,6330],[1,1,0,2,3,0,2565,92340,0,25650],[1,1,3,2,3,3,366,13176,1317.6,3660],[1,1,3,2,2,3,323,5814,581.4,1615],[1,1,4,2,2,3,1786,32148,3214.8,8930],[1,1,0,2,2,2,347,6246,437.22,1735],[1,2,3,2,4,3,624,15724.8,1572.48,4368],[1,2,4,2,1,2,3812,41169.6,2881.872,11436],[1,2,1,2,1,3,2305,24894,2489.4,6915],[1,2,2,2,4,1,1030,25956,1297.8,7210],[1,2,0,2,3,3,2903,104508,10450.8,29030],[1,2,1,2,3,3,2577,92772,9277.2,25770],[1,2,2,2,3,3,2559,92124,9212.4,25590],[1,2,3,2,3,3,1196,43056,4305.6,11960],[1,2,4,2,3,2,1461,52596,3681.72,14610],[1,3,0,2,4,1,960,864000,43200,240000],[1,3,4,2,5,3,1226,88272,8827.2,24520],[1,3,1,2,4,2,653,587700,41139,163250],[1,3,2,2,1,1,739,7981.2,399.06,2217],[1,3,3,2,1,3,3386,36568.8,3656.88,10158],[1,3,4,2,3,1,4831,121741.2,6087.06,33817],[1,3,3,2,3,3,2111,53197.2,5319.72,14777],[1,3,1,2,3,3,3326,83815.2,8381.52,23282],[1,3,2,2,3,2,3322,83714.4,5860.008,23254],[1,3,0,2,3,3,1642,41378.4,4137.84,11494],[1,4,3,2,3,3,935,33660,3366,9350],[1,4,4,2,2,3,3832,68976,6897.6,19160],[1,4,1,2,2,2,3033,54594,3821.58,15165],[1,4,2,2,2,2,2261,40698,2848.86,11305],[1,4,3,2,0,3,2764,199008,19900.8,55280],[1,4,0,2,2,3,1023,18414,1841.4,5115],[1,4,3,2,5,1,244,6148.8,307.44,1708],[1,4,4,2,1,3,430,4644,464.4,1290],[1,4,1,2,1,2,2281,24634.8,1724.436,6843],[1,4,0,2,1,1,3493,37724.4,1886.22,10479],[1,4,2,2,1,2,1077,11631.6,814.212,3231],[1,4,4,2,3,2,855,21546,1508.22,5985],[1,4,1,2,3,1,3052,76910.4,3845.52,21364],[1,4,2,2,3,2,1340,33768,2363.76,9380],[1,4,0,2,3,2,1426,35935.2,2515.464,9982],[1,5,0,2,3,3,536,19296,1929.6,5360],[1,5,4,2,0,2,3454,87040.8,6092.856,24178],[1,5,2,2,4,2,3369,84898.8,5942.916,23583],[1,5,0,2,5,3,3066,1324512,132451.2,367920],[1,5,1,2,3,2,2855,102780,7194.6,28550],[1,5,1,2,0,0,1955,140760,0,39100],[1,5,1,2,2,0,3241,58338,0,16205],[1,5,4,2,2,2,3304,59472,4163.04,16520],[1,5,2,2,3,2,2490,89640,6274.8,24900],[1,5,0,2,2,2,1152,20736,1451.52,5760],[1,5,3,2,3,2,915,32940,2305.8,9150],[1,6,4,2,3,1,1488,53568,2678.4,14880],[1,6,1,2,0,3,5095,128394,12839.4,35665],[1,6,0,2,3,3,4204,151344,15134.4,42040],[1,6,2,2,0,0,4988,125697.6,0,34916],[1,6,3,2,2,3,556,10008,1000.8,2780],[1,6,1,2,2,1,2957,53226,2661.3,14785],[1,6,4,2,1,1,1796,19396.8,969.84,5388],[1,6,2,2,2,2,3318,59724,4180.68,16590],[1,6,0,2,1,2,5295,57186,4003.02,15885],[1,7,3,2,5,2,2454,176688,12368.16,49080],[1,7,0,4,0,2,3334,3120624,218443.68,866840],[1,7,2,4,4,2,709,638100,44667,177250],[1,7,1,4,4,2,537,483300,33831,134250],[1,7,0,4,3,3,483,17388,1738.8,4830],[1,7,1,4,3,3,432,10886.4,1088.64,3024],[1,7,2,4,3,2,3539,89182.8,6242.796,24773],[1,7,0,4,2,1,2090,37620,1881,10450],[1,7,3,4,3,0,2396,60379.2,0,16772],[1,7,4,4,3,2,1146,28879.2,2021.544,8022],[1,8,0,4,0,3,2445,2288520,228852,635700],[1,8,3,4,3,2,1282,46152,3230.64,12820],[1,8,0,4,3,1,3506,126216,6310.8,35060],[1,8,2,4,3,2,2718,97848,6849.36,27180],[1,8,1,2,3,2,2550,91800,6426,25500],[1,8,4,2,3,1,3439,123804,6190.2,34390],[1,8,2,2,2,0,697,12546,0,3485],[1,8,3,2,2,3,966,17388,1738.8,4830],[1,8,4,2,2,3,3175,57150,5715,15875],[1,8,1,2,2,1,268,4824,241.2,1340],[1,8,0,2,2,3,698,12564,1256.4,3490],[1,9,0,2,0,3,3827,96440.4,9644.04,26789],[1,9,2,2,5,1,3589,1550448,77522.4,430680],[1,9,3,2,4,2,3778,95205.6,6664.392,26446],[1,9,1,2,5,1,2648,1143936,57196.8,317760],[1,9,3,2,1,1,2854,30823.2,1541.16,8562],[1,9,4,2,4,3,1175,1057500,105750,293750],[1,9,1,2,2,2,1955,35190,2463.3,9775],[1,9,4,2,2,1,2589,46602,2330.1,12945],[1,9,2,2,5,3,2047,147384,14738.4,40940],[1,9,0,3,2,3,2661,47898,4789.8,13305],[1,9,0,3,3,3,1690,60840,6084,16900],[1,9,3,3,3,3,2661,95796,9579.6,26610],[1,9,3,3,3,2,1175,29610,2072.7,8225],[1,9,0,3,2,3,1531,27558,2755.8,7655],[1,9,1,3,3,3,3589,90442.8,9044.28,25123],[1,9,4,3,3,0,2265,57078,0,15855],[1,9,2,3,3,3,3827,137772,13777.2,38270],[1,9,2,3,3,2,1819,45838.8,3208.716,12733],[1,10,1,3,3,3,2818,101448,10144.8,28180],[1,10,1,3,5,1,1138,28677.6,1433.88,7966],[1,10,4,3,5,2,824,20764.8,1453.536,5768],[1,11,0,3,1,1,891,9622.8,481.14,2673],[1,11,0,2,3,1,3745,134820,6741,37450],[1,11,1,2,1,1,3745,40446,2022.3,11235],[1,11,1,2,3,1,2825,101700,5085,28250],[1,11,4,2,4,2,2825,203400,14238,56500],[1,11,1,2,4,2,3495,88074,6165.18,24465],[1,11,2,2,1,0,2509,27097.2,0,7527],[1,11,2,2,3,0,1977,71172,0,19770],[1,11,3,2,1,2,2715,29322,2052.54,8145],[1,11,3,2,3,2,1778,64008,4480.56,17780],[1,11,0,2,4,0,1778,128016,0,35560],[1,11,2,2,4,3,1187,29912.4,2991.24,8309],[1,11,1,2,4,3,350,25200,2520,7000],[1,11,4,2,3,2,1630,58680,4107.6,16300],[1,11,0,2,3,0,2827,101772,0,28270],[1,11,2,2,3,3,2715,97740,9774,27150],[1,11,3,2,3,3,818,29448,2944.8,8180],[1,11,1,2,1,2,1608,17366.4,1215.648,4824],[1,11,1,2,3,3,3189,114804,11480.4,31890],[1,11,4,2,1,2,367,3963.6,277.452,1101],[1,11,3,2,1,2,733,7916.4,554.148,2199],[1,11,2,2,1,3,1373,14828.4,1482.84,4119],[0,0,1,3,5,3,4997,269838,26983.8,74955],[0,0,3,3,5,2,3576,193104,13517.28,53640],[0,0,2,3,5,3,851,45954,4595.4,12765],[0,0,4,3,5,2,694,37476,2623.32,10410],[0,0,0,3,5,3,480,25920,2592,7200],[0,2,1,3,2,2,3126,56268,3938.76,15630],[0,3,3,3,5,2,3285,177390,12417.3,49275],[0,3,2,3,5,3,638,34452,3445.2,9570],[0,4,1,3,5,3,3533,190782,19078.2,52995],[0,4,2,3,5,2,1913,103302,7231.14,28695],[0,4,0,3,5,2,1578,85212,5964.84,23670],[0,4,4,3,5,3,988,53352,5335.2,14820],[0,4,3,3,5,2,306,16524,1156.68,4590],[0,5,0,3,4,2,3555,191970,13437.9,53325],[0,5,4,3,4,3,3209,173286,17328.6,48135],[0,5,1,3,4,0,2723,147042,0,40845],[0,5,2,3,4,0,1110,59940,0,16650],[0,5,0,3,1,2,3555,38394,2687.58,10665],[0,5,3,3,1,0,3088,33350.4,0,9264],[0,5,4,3,1,3,3209,34657.2,3465.72,9627],[0,5,1,3,1,0,2723,29408.4,0,8169],[0,5,3,3,2,0,3088,55584,0,15440],[0,6,1,3,4,3,4843,261522,26152.2,72645],[0,6,4,3,0,3,3999,215946,21594.6,59985],[0,6,0,3,0,2,2038,110052,7703.64,30570],[0,6,3,3,4,3,801,43254,4325.4,12015],[0,6,2,3,4,3,615,33210,3321,9225],[0,8,2,3,2,1,1797,32346,1617.3,8985],[0,8,0,3,5,1,2646,190512,9525.6,52920],[0,8,1,3,5,3,2805,201960,20196,56100],[0,8,3,3,2,2,720,12960,907.2,3600],[0,8,1,3,4,0,1527,1374300,0,381750],[0,8,4,3,5,1,736,52992,2649.6,14720],[0,8,2,3,5,3,660,35640,3564,9900],[0,8,3,3,5,3,655,35370,3537,9825],[0,8,4,3,3,2,2931,105516,7386.12,29310],[0,8,0,3,3,3,2470,88920,8892,24700],[0,8,1,3,3,0,549,19764,0,5490],[0,9,2,3,5,1,2966,1281312,64065.6,355920],[0,9,1,3,4,3,2167,117018,11701.8,32505],[0,9,2,3,4,1,1945,105030,5251.5,29175],[0,9,1,3,5,2,2076,896832,62778.24,249120],[0,9,3,3,0,3,1727,43520.4,4352.04,12089],[0,9,0,3,3,2,1228,44208,3094.56,12280],[0,9,0,3,0,3,1743,94122,9412.2,26145],[0,9,3,3,4,1,1514,81756,4087.8,22710],[0,9,1,3,0,2,1403,35355.6,2474.892,9821],[0,9,0,3,4,2,1389,100008,7000.56,27780],[0,9,2,3,0,2,1159,29206.8,2044.476,8113],[0,9,4,3,3,2,727,26172,1832.04,7270],[0,9,2,3,0,1,2966,2776176,138808.8,771160],[0,9,4,3,0,1,671,36234,1811.7,10065],[0,9,1,3,0,2,2076,1943136,136019.52,539760],[0,9,0,3,0,2,1228,1149408,80458.56,319280],[0,9,3,3,5,3,344,148608,14860.8,41280],[0,9,2,3,3,1,1945,70020,3501,19450],[0,9,1,3,3,3,2167,78012,7801.2,21670],[0,9,3,3,3,1,1514,54504,2725.2,15140],[0,9,0,3,3,3,1743,62748,6274.8,17430],[0,9,4,3,3,1,671,24156,1207.8,6710],[0,9,0,3,4,3,1956,105624,10562.4,29340],[0,9,1,3,4,2,1534,82836,5798.52,23010],[0,9,4,3,4,2,1441,77814,5446.98,21615],[0,9,2,3,4,3,1469,79326,7932.6,22035],[0,10,2,3,3,2,2146,77256,5407.92,21460],[0,10,3,3,3,3,2151,77436,7743.6,21510],[0,10,4,3,3,3,2007,72252,7225.2,20070],[0,10,0,3,4,3,2935,211320,21132,58700],[0,10,0,3,3,0,1725,62100,0,17250],[0,10,1,3,3,3,1922,69192,6919.2,19220],[0,10,1,3,4,2,2682,193104,13517.28,53640],[0,10,4,3,0,3,2548,137592,13759.2,38220],[0,10,2,3,4,2,2297,165384,11576.88,45940],[0,10,3,3,0,3,1870,100980,10098,28050],[0,10,4,3,4,2,1265,91080,6375.6,25300],[0,10,3,3,4,2,1123,80856,5659.92,22460],[0,10,0,3,5,1,2092,52718.4,2635.92,14644],[0,10,2,3,0,2,970,52380,3666.6,14550],[0,10,1,3,0,1,321,17334,866.7,4815],[0,10,0,3,1,3,1560,16848,1684.8,4680],[0,10,3,3,1,2,3489,37681.2,2637.684,10467],[0,10,0,3,1,3,3361,36298.8,3629.88,10083],[0,11,3,3,4,1,1940,1746000,87300,485000],[0,11,4,3,5,2,1421,102312,7161.84,28420],[0,11,0,3,0,1,1778,1664208,83210.4,462280],[0,11,2,3,4,3,1870,1683000,168300,467500],[0,11,1,3,5,2,1033,74376,5206.32,20660],[0,11,1,3,4,3,1281,1152900,115290,320250],[0,11,0,3,3,0,2152,77472,0,21520],[0,11,1,3,3,1,2261,81396,4069.8,22610],[0,11,2,3,3,2,2116,76176,5332.32,21160],[0,11,4,3,3,1,1925,69300,3465,19250],[0,11,3,3,3,3,380,13680,1368,3800],[0,11,3,3,0,3,2696,145584,14558.4,40440],[0,11,1,3,0,3,2590,139860,13986,38850],[0,11,2,3,0,2,889,48006,3360.42,13335],[0,11,4,3,0,0,769,41526,0,11535],[0,11,0,3,1,3,2875,31050,3105,8625],[1,0,1,3,5,3,2562,138348,13834.8,38430],[1,0,3,3,5,2,1277,68958,4827.06,19155],[1,0,2,3,5,3,1951,105354,10535.4,29265],[1,0,4,3,5,2,711,38394,2687.58,10665],[1,0,0,3,5,3,3309,178686,17868.6,49635],[1,1,0,3,3,1,1700,61200,3060,17000],[1,1,1,3,3,1,3099,111564,5578.2,30990],[1,1,4,3,3,1,2361,84996,4249.8,23610],[1,1,3,3,3,0,940,33840,0,9400],[1,1,2,3,3,3,1694,60984,6098.4,16940],[1,2,1,3,2,2,1434,25812,1806.84,7170],[1,2,3,3,2,1,3282,59076,2953.8,16410],[1,2,0,3,2,1,3185,57330,2866.5,15925],[1,2,2,3,2,0,1509,27162,0,7545],[1,2,4,3,2,3,322,5796,579.6,1610],[1,3,3,3,5,2,1274,68796,4815.72,19110],[1,3,2,3,5,3,780,42120,4212,11700],[1,3,1,3,3,2,3384,121824,8527.68,33840],[1,3,4,3,3,2,4998,179928,12594.96,49980],[1,3,0,3,3,3,5910,212760,21276,59100],[1,4,1,3,5,3,2985,161190,16119,44775],[1,4,2,3,5,2,760,41040,2872.8,11400],[1,4,0,3,5,2,2000,108000,7560,30000],[1,4,4,3,5,3,1646,88884,8888.4,24690],[1,4,3,3,5,2,2043,110322,7722.54,30645],[1,5,0,3,4,2,3227,174258,12198.06,48405],[1,5,4,3,4,3,3734,201636,20163.6,56010],[1,5,1,3,4,0,3454,186516,0,51810],[1,5,2,3,4,0,1350,72900,0,20250],[1,5,0,3,1,2,3227,34851.6,2439.612,9681],[1,5,3,3,1,0,3734,40327.2,0,11202],[1,5,4,3,1,3,2487,26859.6,2685.96,7461],[1,5,1,3,1,0,3369,36385.2,0,10107],[1,5,3,3,2,0,2855,51390,0,14275],[1,5,2,3,1,0,2020,21816,0,6060],[1,6,1,3,4,3,4534,244836,24483.6,68010],[1,6,4,3,0,3,3691,199314,19931.4,55365],[1,6,0,3,0,2,4617,249318,17452.26,69255],[1,6,3,3,4,3,1123,60642,6064.2,16845],[1,6,2,3,4,3,824,44496,4449.6,12360],[1,7,0,3,3,3,3704,133344,13334.4,37040],[1,7,4,3,3,2,3358,120888,8462.16,33580],[1,7,1,3,3,2,2882,103752,7262.64,28820],[1,7,3,3,3,3,2754,99144,9914.4,27540],[1,7,2,3,3,2,2599,93564,6549.48,25990],[1,8,3,3,3,0,2066,74376,0,20660],[1,8,1,3,3,2,1888,67968,4757.76,18880],[1,8,4,3,3,3,550,19800,1980,5500],[1,8,2,3,3,1,2813,101268,5063.4,28130],[1,8,0,3,3,1,3053,109908,5495.4,30530],[1,9,0,3,4,3,2265,122310,12231,33975],[1,9,1,3,4,2,3202,172908,12103.56,48030],[1,9,4,3,4,2,1655,89370,6255.9,24825],[1,9,2,3,4,3,3202,172908,17290.8,48030],[1,9,3,3,2,1,1313,23634,1181.7,6565],[1,9,3,3,3,1,1629,58644,2932.2,16290],[1,9,0,3,3,3,3530,127080,12708,35300],[1,9,1,3,3,2,2046,73656,5155.92,20460],[1,9,4,3,3,2,1600,57600,4032,16000],[1,9,2,3,3,3,1502,54072,5407.2,15020],[1,10,3,3,1,2,709,7657.2,536.004,2127],[1,10,0,3,1,3,3664,39571.2,3957.12,10992],[1,10,4,3,1,2,3530,38124,2668.68,10590],[1,10,2,3,1,3,3575,38610,3861,10725],[1,10,1,3,1,2,3044,32875.2,2301.264,9132],[1,11,3,3,0,3,1977,106758,10675.8,29655],[1,11,1,3,0,3,2827,152658,15265.8,42405],[1,11,2,3,0,2,2068,111672,7817.04,31020],[1,11,4,3,0,0,919,49626,0,13785],[1,11,0,3,1,3,1791,19342.8,1934.28,5373],[1,11,0,3,2,3,3495,62910,6291,17475],[1,11,3,3,2,3,3016,54288,5428.8,15080],[1,11,1,3,2,3,2379,42822,4282.2,11895],[1,11,2,3,2,2,1106,19908,1393.56,5530],[1,11,4,3,2,0,919,16542,0,4595],[0,0,4,4,3,3,4369,157284,15728.4,43690],[0,0,3,4,3,2,3206,115416,8079.12,32060],[0,0,1,4,3,1,3043,109548,5477.4,30430],[0,0,0,4,3,3,1091,39276,3927.6,10910],[0,0,2,4,3,3,1009,36324,3632.4,10090],[0,1,0,4,4,0,2501,2250900,0,625250],[0,1,4,4,4,1,3555,3199500,159975,888750],[0,1,3,4,4,2,3434,3090600,216342,858500],[0,1,2,4,4,2,3324,2991600,209412,831000],[0,1,1,4,4,2,1199,1079100,75537,299750],[0,2,1,4,0,3,3094,111384,11138.4,30940],[0,2,0,4,0,3,1110,55944,5594.4,15540],[0,2,4,4,0,3,3741,3501576,350157.6,972660],[0,2,3,4,0,1,1376,1287936,64396.8,357760],[0,3,0,4,2,2,4753,85554,5988.78,23765],[0,3,4,4,2,1,2876,51768,2588.4,14380],[0,3,1,4,2,3,2216,39888,3988.8,11080],[0,3,3,4,3,2,2009,72324,5062.68,20090],[0,3,2,4,3,1,1768,63648,3182.4,17680],[0,4,4,4,3,1,3648,131328,6566.4,36480],[0,4,2,4,3,1,2160,77760,3888,21600],[0,4,0,4,3,2,2128,76608,5362.56,21280],[0,4,1,4,3,1,1148,41328,2066.4,11480],[0,4,3,4,3,3,739,26604,2660.4,7390],[0,5,3,4,3,2,3075,110700,7749,30750],[0,5,0,4,1,2,1368,14774.4,1034.208,4104],[0,5,0,4,3,2,1368,49248,3447.36,13680],[0,5,4,4,1,2,1239,13381.2,936.684,3717],[0,5,4,4,3,2,1239,44604,3122.28,12390],[0,5,2,4,1,1,861,9298.8,464.94,2583],[0,5,2,4,3,1,861,30996,1549.8,8610],[0,5,1,4,1,2,560,6048,423.36,1680],[0,5,1,4,3,2,560,20160,1411.2,5600],[0,5,3,4,0,2,3075,2878200,201474,799500],[0,6,2,4,1,3,3514,37951.2,3795.12,10542],[0,6,0,4,5,2,4742,2048544,143398.08,569040],[0,6,4,4,5,3,3075,1328400,132840,369000],[0,6,1,4,5,2,2074,895968,62717.76,248880],[0,6,3,4,1,3,1001,10810.8,1081.08,3003],[0,7,2,4,2,1,2324,41832,2091.6,11620],[0,7,1,4,2,2,1953,35154,2460.78,9765],[0,7,3,4,2,0,1198,21564,0,5990],[0,7,0,4,4,1,2343,2108700,105435,585750],[0,7,4,4,4,3,3176,2858400,285840,794000],[0,8,4,4,2,1,2498,44964,2248.2,12490],[0,8,0,4,2,2,1283,23094,1616.58,6415],[0,8,2,4,3,2,1123,40428,2829.96,11230],[0,8,3,4,3,0,788,28368,0,7880],[0,8,1,4,2,2,322,5796,405.72,1610],[0,8,1,4,4,0,2689,2420100,0,672250],[0,8,0,4,4,2,2668,2401200,168084,667000],[0,8,4,4,4,2,2334,2100600,147042,583500],[0,8,2,4,4,1,1233,1109700,55485,308250],[0,9,4,4,5,3,2294,991008,99100.8,275280],[0,9,1,4,5,2,1221,527472,36923.04,146520],[0,9,3,4,1,1,494,5335.2,266.76,1482],[0,9,2,4,1,1,214,2311.2,115.56,642],[0,9,4,4,4,3,2294,2064600,206460,573500],[0,9,0,4,5,3,269,116208,11620.8,32280],[0,9,1,4,4,2,1221,1098900,76923,305250],[0,9,3,4,4,1,494,444600,22230,123500],[0,9,2,4,4,1,214,192600,9630,53500],[0,9,0,4,4,3,269,242100,24210,67250],[0,9,1,4,1,2,2726,29440.8,2060.856,8178],[0,9,1,4,2,2,2726,49068,3434.76,13630],[0,9,2,4,1,1,2526,27280.8,1364.04,7578],[0,9,2,4,2,1,2526,45468,2273.4,12630],[0,9,0,4,1,3,1870,20196,2019.6,5610],[0,9,4,4,1,3,1263,13640.4,1364.04,3789],[0,9,3,4,2,3,683,12294,1229.4,3415],[0,9,3,4,0,3,683,49176,4917.6,13660],[0,9,0,4,4,3,1870,1683000,168300,467500],[0,10,3,4,5,3,2605,1125360,112536,312600],[0,10,4,4,5,3,2574,1111968,111196.8,308880],[0,10,2,4,5,3,2536,1095552,109555.2,304320],[0,10,0,4,3,2,1404,50544,3538.08,14040],[0,10,1,4,5,2,386,166752,11672.64,46320],[0,10,4,4,3,1,3631,130716,6535.8,36310],[0,10,3,4,3,3,2688,96768,9676.8,26880],[0,10,1,4,3,2,1655,59580,4170.6,16550],[0,10,0,4,3,3,1708,61488,6148.8,17080],[0,10,2,4,3,3,1699,61164,6116.4,16990],[0,11,1,4,2,3,1186,21348,2134.8,5930],[0,11,3,4,2,2,1100,19800,1386,5500],[0,11,2,4,2,2,334,6012,420.84,1670],[0,11,0,4,4,2,2436,2192400,153468,609000],[0,11,4,4,4,2,808,727200,50904,202000],[0,11,0,4,3,1,2395,86220,4311,23950],[0,11,4,4,5,2,1715,740880,51861.6,205800],[0,11,2,4,5,2,1563,675216,47265.12,187560],[0,11,1,4,5,3,1066,460512,46051.2,127920],[0,11,3,4,5,2,794,343008,24010.56,95280],[0,11,0,4,0,1,2395,2241720,112086,622700],[0,11,4,4,0,2,1715,1605240,112366.8,445900],[0,11,2,4,0,2,1563,1462968,102407.76,406380],[1,0,4,4,3,3,4374,157464,15746.4,43740],[1,0,3,4,3,2,2921,105156,7360.92,29210],[1,0,1,4,3,1,3366,121176,6058.8,33660],[1,0,0,4,3,3,2604,93744,9374.4,26040],[1,0,2,4,3,3,1133,40788,4078.8,11330],[1,1,0,4,4,0,2937,2643300,0,734250],[1,1,4,4,4,1,2622,2359800,117990,655500],[1,1,3,4,4,2,1045,940500,65835,261250],[1,1,2,4,4,2,3606,3245400,227178,901500],[1,1,1,4,4,2,3490,3141000,219870,872500],[1,2,1,4,0,3,2343,84348,8434.8,23430],[1,2,0,4,0,3,2577,129880.8,12988.08,36078],[1,2,4,4,0,3,640,599040,59904,166400],[1,2,3,4,0,1,3931,3679416,183970.8,1022060],[1,2,2,4,0,1,1265,1184040,59202,328900],[1,3,0,4,2,2,874,15732,1101.24,4370],[1,3,4,4,2,1,3726,67068,3353.4,18630],[1,3,1,4,2,3,2558,46044,4604.4,12790],[1,3,3,4,3,2,2321,83556,5848.92,23210],[1,3,2,4,3,1,2509,90324,4516.2,25090],[1,4,4,4,3,1,3744,134784,6739.2,37440],[1,4,2,4,3,1,2179,78444,3922.2,21790],[1,4,0,4,3,2,1907,68652,4805.64,19070],[1,4,1,4,3,1,3711,133596,6679.8,37110],[1,4,3,4,3,3,1872,67392,6739.2,18720],[1,5,3,4,3,2,3817,137412,9618.84,38170],[1,5,0,4,1,2,1783,19256.4,1347.948,5349],[1,5,0,4,3,2,1424,51264,3588.48,14240],[1,5,4,4,1,2,1150,12420,869.4,3450],[1,5,4,4,3,2,1551,55836,3908.52,15510],[1,5,2,4,1,1,1152,12441.6,622.08,3456],[1,5,2,4,3,1,775,27900,1395,7750],[1,5,1,4,1,2,775,8370,585.9,2325],[1,5,1,4,3,2,572,20592,1441.44,5720],[1,5,3,4,0,2,777,727272,50909.04,202020],[1,6,2,4,1,3,4497,48567.6,4856.76,13491],[1,6,0,4,5,2,2758,1191456,83401.92,330960],[1,6,4,4,5,3,2132,921024,92102.4,255840],[1,6,1,4,5,2,1705,736560,51559.2,204600],[1,6,3,4,1,3,2170,23436,2343.6,6510],[1,7,2,4,2,1,2806,50508,2525.4,14030],[1,7,1,4,2,2,2434,43812,3066.84,12170],[1,7,3,4,2,0,3633,65394,0,18165],[1,7,0,4,4,1,1302,1171800,58590,325500],[1,7,4,4,4,3,784,705600,70560,196000],[1,8,1,4,4,0,2196,1976400,0,549000],[1,8,0,4,4,2,855,769500,53865,213750],[1,8,4,4,4,2,2797,2517300,176211,699250],[1,8,2,4,4,1,913,821700,41085,228250],[1,8,3,4,4,3,1374,1236600,123660,343500],[1,9,1,4,1,2,3530,38124,2668.68,10590],[1,9,1,4,2,2,2859,51462,3602.34,14295],[1,9,2,4,1,1,2859,30877.2,1543.86,8577],[1,9,2,4,2,1,2648,47664,2383.2,13240],[1,9,0,4,1,3,1824,19699.2,1969.92,5472],[1,9,4,4,1,3,1489,16081.2,1608.12,4467],[1,9,3,4,2,3,2047,36846,3684.6,10235],[1,9,3,4,0,3,1412,101664,10166.4,28240],[1,9,0,4,4,3,521,468900,46890,130250],[1,9,4,4,4,3,298,268200,26820,74500],[1,10,4,4,3,1,455,16380,819,4550],[1,10,3,4,3,3,3815,137340,13734,38150],[1,10,1,4,3,2,1534,55224,3865.68,15340],[1,10,0,4,3,3,1728,62208,6220.8,17280],[1,10,2,4,3,3,1783,64188,6418.8,17830],[1,11,0,4,3,1,3263,117468,5873.4,32630],[1,11,4,4,5,2,3189,1377648,96435.36,382680],[1,11,2,4,5,2,1791,773712,54159.84,214920],[1,11,1,4,5,3,733,316656,31665.6,87960],[1,11,3,4,5,2,1373,593136,41519.52,164760],[1,11,0,4,0,1,367,343512,17175.6,95420],[1,11,4,4,0,2,2509,2348424,164389.68,652340],[1,11,2,4,0,2,3016,2822976,197608.32,784160],[1,11,3,4,0,2,2001,1872936,131105.52,520260],[1,11,1,4,0,3,3263,3054168,305416.8,848380]]}</script>
+  <script>
+(() => {
+  "use strict";
+  const { dimensions, rows } = JSON.parse(document.getElementById("financial-data").textContent);
+  const $ = (id) => document.getElementById(id);
+  const dimIndex = { year: 0, country: 2, segment: 3, product: 4, band: 5 };
+  const allLabels = { year: "All years", country: "All countries", segment: "All segments", product: "All products", band: "All bands" };
+  const filters = Object.fromEntries(Object.keys(dimIndex).map(key => [key, null]));
+  const selects = Object.fromEntries(Object.keys(dimIndex).map(key => [key, $(key + "-filter")]));
+  const months = ["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+  const fullMonths = ["January","February","March","April","May","June","July","August","September","October","November","December"];
+  const colors = ["#b1a7ff","#7de8cf"];
+  const metricNames = { revenue: "Net revenue", profit: "Gross profit", units: "Units sold" };
+  const exactNumber = new Intl.NumberFormat("en-US",{maximumFractionDigits:2});
+  const exactMoney = new Intl.NumberFormat("en-US",{style:"currency",currency:"USD",minimumFractionDigits:2,maximumFractionDigits:2});
+  const percent = (value, digits=2) => value === null || !Number.isFinite(value) ? "—" : (value*100).toFixed(digits) + "%";
+  const clamp = (x, lo, hi) => Math.min(hi, Math.max(lo, x));
+  const escape = value => String(value).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+  const compact = (x, digits=2) => {
+    if (Math.abs(x)>=1e6) return (x/1e6).toFixed(digits) + "M";
+    if (Math.abs(x)>=1e3) return (x/1e3).toFixed(digits) + "K";
+    return exactNumber.format(x);
+  };
+  const money = (x, digits=2) => x < 0 ? "−$" + compact(-x,digits) : "$" + compact(x,digits);
+  const axisNumber = x => x >= 1e6 ? exactNumber.format(x / 1e6) + "M" : x >= 1e3 ? exactNumber.format(x / 1e3) + "K" : exactNumber.format(x);
+  const bandName = (band) => band.name === "None" ? "No discount" : band.name;
+  let currentRows = rows;
+  let trendMetric = "revenue";
+  let breakdown = "product";
+  let chartState = null;
+  let hoverMonth = null;
+
+  function computeTotals(input) {
+    let units = 0, gross = 0, discounts = 0, cogs = 0;
+    for (const row of input) {
+      units += row[6];
+      gross += row[7];
+      discounts += row[8];
+      cogs += row[9];
+    }
+    const revenue = gross - discounts;
+    const profit = revenue - cogs;
+    return { count: input.length, units, gross, discounts, cogs, revenue, profit, margin: revenue ? profit/revenue : null, discountRate: gross ? discounts/gross : null };
+  }
+
+  function renderKpis(total) {
+    const values = {
+      revenue: [money(total.revenue), exactMoney.format(total.revenue)],
+      profit: [money(total.profit), exactMoney.format(total.profit)],
+      margin: [percent(total.margin), percent(total.margin)],
+      units: [compact(total.units), exactNumber.format(total.units)],
+      gross: [money(total.gross), exactMoney.format(total.gross)],
+      discount: [money(total.discounts), exactMoney.format(total.discounts)]
+    };
+    for (const [key,[value,full]] of Object.entries(values)) {
+      const el = $("kpi-" + key);
+      el.textContent = total.count ? value : "—";
+      el.title = total.count ? full : "No matching records";
+    }
+    $("kpi-discount-note").textContent = total.count ? percent(total.discountRate) + " of gross sales" : "Share of gross sales";
+  }
+
+  function refresh() {
+    currentRows = rows.filter(row => Object.keys(dimIndex).every(key => filters[key] === null || row[dimIndex[key]] === filters[key]));
+    const total = computeTotals(currentRows);
+    let applied = 0;
+    for (const [key, el] of Object.entries(selects)) {
+      el.value = filters[key] === null ? "" : String(filters[key]);
+      el.classList.toggle("has-filter", filters[key] !== null);
+      if (filters[key] !== null) applied++;
+    }
+    $("reset-filters").disabled = !applied;
+    $("result-status").classList.toggle("no-data", !total.count);
+    const noun = total.count === 1 ? "sales record" : "sales records";
+    $("result-text").textContent = total.count ? exactNumber.format(total.count) + " " + noun + (applied ? (total.count === 1 ? " matches" : " match") : " · full sample") : "No matching sales records";
+    renderKpis(total);
+    renderTrend();
+    renderBreakdown();
+    renderDiscounts(total);
+  }
+
+  function setFilter(key, index) {
+    if (key in filters && (index === null || Number.isInteger(index) && index >= 0 && index < dimensions[key].length)) {
+      filters[key] = index;
+      refresh();
+    }
+  }
+
+  function groupByDimension(key) {
+    const index = dimIndex[key];
+    const grouped = Array.from({length:dimensions[key].length}, () => []);
+    for (const row of currentRows) grouped[row[index]].push(row);
+    return grouped.map((part,i) => ({ index:i, label:dimensions[key][i], ...computeTotals(part) }));
+  }
+
+  function renderBreakdown() {
+    const holder = $("breakdown-bars");
+    const groups = groupByDimension(breakdown).filter(d=>d.count).sort((a,b)=>b.revenue-a.revenue);
+    if (!groups.length) {
+      holder.innerHTML = '<p class="empty-bars">No records match these filters.</p>';
+      return;
+    }
+    const maxRevenue = Math.max(...groups.map(d=>d.revenue),1);
+    holder.innerHTML = groups.map(d => {
+      const title = d.label + ": " + exactMoney.format(d.revenue) + " net revenue; " + exactMoney.format(d.profit) + " gross profit; " + percent(d.margin) + " margin.";
+      const pressed = filters[breakdown] === d.index;
+      return '<button type="button" class="rank-row" data-index="' + d.index + '" aria-pressed="' + pressed + '" title="' + escape(title) + '" aria-label="' + escape(title + (pressed ? " Clear filter." : " Filter dashboard.")) + '">' +
+        '<span class="rank-label">' + escape(d.label) + '</span>' +
+        '<span class="bar-track" aria-hidden="true"><span class="bar-fill" style="width:' + clamp(100*d.revenue/maxRevenue,0,100).toFixed(3) + '%"><span class="bar-profit" style="width:' + clamp(100*(d.margin??0),0,100).toFixed(3) + '%"></span></span></span>' +
+        '<span class="rank-value">' + money(d.revenue) + '<small>' + money(d.profit) + ' profit</small></span></button>';
+    }).join("");
+  }
+
+  function tableCells(d, highlight=false) {
+    return '<td>' + exactNumber.format(d.units) + '</td>' +
+      '<td title="' + exactMoney.format(d.gross) + '">' + money(d.gross) + '</td>' +
+      '<td title="' + exactMoney.format(d.discounts) + '">' + money(d.discounts) + '</td>' +
+      '<td title="' + exactMoney.format(d.revenue) + '">' + money(d.revenue) + '</td>' +
+      '<td class="' + (highlight ? "top-profit" : "") + '" title="' + exactMoney.format(d.profit) + '">' + money(d.profit) + '</td>' +
+      '<td>' + percent(d.margin) + '</td>';
+  }
+
+  function renderDiscounts(total) {
+    const groups = groupByDimension("band").filter(d=>d.count);
+    const bestProfit = Math.max(...groups.map(d=>d.profit));
+    $("discount-rows").innerHTML = groups.length ? groups.map(d => {
+      const label = bandName(d.label);
+      const pressed = filters.band === d.index;
+      const cls = d.label.name.toLowerCase();
+      return '<tr><th scope="row"><button type="button" class="band-button" data-band="' + d.index + '" aria-pressed="' + pressed + '" aria-label="' + escape(label+" discount band, "+percent(d.label.rate,0)+(pressed?", clear filter":", filter dashboard")) + '">' +
+        '<i class="band-' + cls + '" aria-hidden="true"></i>' + escape(label) + '<small>' + percent(d.label.rate,0) + '</small></button></th>' +
+        tableCells(d, groups.length>1 && d.profit===bestProfit) + '</tr>';
+    }).join("") : '<tr><td colspan="7" class="table-empty">No records match these filters.</td></tr>';
+    $("discount-total").innerHTML = total.count ? '<tr><th scope="row">Total</th>' + tableCells(total) + '</tr>' : "";
+  }
+
+  function hideTip() {
+    hoverMonth = null;
+    $("chart-tooltip").hidden = true;
+    const cursor = $("hover-line");
+    if (cursor) cursor.setAttribute("visibility","hidden");
+  }
+
+  function showTip(month) {
+    if (!chartState || hoverMonth === month) return;
+    const { series, x, width } = chartState;
+    const entries = series.filter(s=>s.points[month]!==null);
+    if (!entries.length) { hideTip(); return; }
+    hoverMonth = month;
+    const tip = $("chart-tooltip");
+    tip.innerHTML = "<strong>"+fullMonths[month]+"</strong>"+entries.map(s => '<span class="tip-row"><span>'+s.year+'</span><span class="tip-value">'+
+      (trendMetric==="units" ? exactNumber.format(s.points[month]) : exactMoney.format(s.points[month]))+'</span></span>').join("");
+    tip.hidden = false;
+    const left = x(month)+12;
+    tip.style.left = clamp(left+tip.offsetWidth>width-2 ? x(month)-tip.offsetWidth-12 : left,3,Math.max(3,width-tip.offsetWidth-2))+"px";
+    const line = $("hover-line");
+    line.setAttribute("x1", x(month));
+    line.setAttribute("x2", x(month));
+    line.setAttribute("visibility","visible");
+  }
+
+  function niceCeiling(peak) {
+    if (peak <= 0) return { max: 1, count: 4 };
+    const guess = peak / 4;
+    const scale = Math.pow(10,Math.floor(Math.log10(guess)));
+    const step = ([1,2,2.5,5,10].find(x=>x*scale>=guess)??10)*scale;
+    const count = Math.ceil(peak/step);
+    return { max: count*step, count };
+  }
+
+  function renderTrend() {
+    hideTip();
+    const svg = $("trend-chart");
+    const width = Math.max(215, Math.round($("trend-plot").clientWidth));
+    const height = Math.max(170,Math.round(svg.clientHeight));
+    const left = 47, right = width-12, top = 14, bottom = height-26;
+    const groups = dimensions.year.map(() => Array.from({length:12},()=>[]));
+    for (const r of currentRows) groups[r[0]][r[1]].push(r);
+    const series = groups.map((parts,index)=>({
+      year:dimensions.year[index], color:colors[index % colors.length],
+      points:parts.map(group => group.length ? computeTotals(group)[trendMetric] : null)
+    })).filter(s=>s.points.some(v=>v!==null));
+    $("trend-description").textContent = metricNames[trendMetric] + " by month";
+    $("trend-legend").innerHTML = series.map(s=>'<span><i class="key-dot" style="background:'+s.color+'"></i>'+s.year+'</span>').join("");
+    $("trend-empty").hidden = series.length > 0;
+    svg.setAttribute("viewBox", "0 0 " + width + " " + height);
+    svg.setAttribute("role", "group");
+    svg.setAttribute("aria-label",metricNames[trendMetric]+" by month"+(series.length ? ", "+series.map(s=>s.year).join(" and ") : ", no matching records"));
+    if (!series.length) {
+      chartState = null;
+      svg.innerHTML = "";
+      return;
+    }
+    const { max, count } = niceCeiling(Math.max(...series.flatMap(s=>s.points.filter(v=>v!==null))));
+    const x = i => left+(right-left)*i/11;
+    const y = v => bottom-(bottom-top)*v/max;
+    let markup = "<defs>"+series.map((s,i)=>'<linearGradient id="series-fill-'+i+'" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="'+s.color+'" stop-opacity=".18"/><stop offset="1" stop-color="'+s.color+'" stop-opacity=".015"/></linearGradient>').join("")+"</defs>";
+    for (let i=0;i<=count;i++) {
+      const value = i*max/count, yp = y(value);
+      const unit = trendMetric === "units" ? "" : "$";
+      markup += '<line class="gridline" x1="'+left+'" x2="'+right+'" y1="'+yp+'" y2="'+yp+'"/><text class="axis-label" text-anchor="end" x="'+(left-7)+'" y="'+(yp+3)+'">'+unit+axisNumber(value)+'</text>';
+    }
+    for (let i=0;i<12;i++) {
+      if (width<408 && i%2===1 && i!==11) continue;
+      markup += '<text class="axis-label" text-anchor="middle" x="'+x(i)+'" y="'+(height-8)+'">'+months[i]+'</text>';
+    }
+    const paths = series.map((s,i) => {
+      const runs = [];
+      let run = [];
+      s.points.forEach((value,m)=>{
+        if (value===null) { if (run.length) { runs.push(run); run=[]; } }
+        else run.push([x(m),y(value),m]);
+      });
+      if (run.length) runs.push(run);
+      const areas = [], lines = [], dots = [];
+      for (const group of runs) {
+        const linePath = "M" + group.map(([px,py])=>px.toFixed(2)+","+py.toFixed(2)).join(" L");
+        if (group.length>1) {
+          areas.push('<path fill="url(#series-fill-'+i+')" d="'+linePath+' L'+group.at(-1)[0]+','+bottom+' L'+group[0][0]+','+bottom+' Z"/>');
+          lines.push('<path d="'+linePath+'" fill="none" stroke="'+s.color+'" stroke-width="2.45" stroke-linecap="round" stroke-linejoin="round"/>');
+        }
+        dots.push(...group.map(([px,py])=>'<circle class="chart-point" cx="'+px+'" cy="'+py+'" r="3.4" fill="'+s.color+'"/>'));
+      }
+      return {areas,lines,dots};
+    });
+    for (const part of ["areas","lines","dots"]) markup += paths.map(p=>p[part].join("")).join("");
+    markup += '<line id="hover-line" class="hoverline" x1="'+left+'" x2="'+left+'" y1="'+top+'" y2="'+bottom+'" visibility="hidden"/>';
+    for (let i=0;i<12;i++) {
+      const active = series.filter(s=>s.points[i]!==null);
+      if (!active.length) continue;
+      const label = fullMonths[i]+": "+active.map(s=>s.year+" "+(trendMetric==="units"?exactNumber.format(s.points[i]):exactMoney.format(s.points[i]))).join("; ");
+      const offset=(right-left)/22;
+      const targetLeft=Math.max(0,x(i)-offset), targetRight=Math.min(width,x(i)+offset);
+      markup += '<g class="month-target" tabindex="0" data-month="'+i+'" role="img" aria-label="'+escape(label)+'"><rect x="'+targetLeft+'" y="'+top+'" width="'+(targetRight-targetLeft)+'" height="'+(bottom-top)+'" fill="transparent"/></g>';
+    }
+    svg.innerHTML = markup;
+    chartState = { series, x, width, left, right };
+  }
+
+  for (const [key, el] of Object.entries(selects)) {
+    el.add(new Option(allLabels[key],""));
+    dimensions[key].forEach((item,index)=>el.add(new Option(key==="band" ? bandName(item)+" ("+percent(item.rate,0)+")" : item,String(index))));
+    el.addEventListener("change",()=>setFilter(key, el.value===""?null:Number(el.value)));
+  }
+  $("filters").addEventListener("submit", e=>e.preventDefault());
+  $("reset-filters").addEventListener("click",() => {
+    for (const key of Object.keys(filters)) filters[key] = null;
+    refresh();
+    selects.year.focus({preventScroll:true});
+  });
+  $("trend-options").addEventListener("click",event=>{
+    const button = event.target.closest("button[data-metric]");
+    if (!button) return;
+    trendMetric = button.dataset.metric;
+    for (const b of $("trend-options").querySelectorAll("button")) b.setAttribute("aria-pressed",String(b===button));
+    renderTrend();
+  });
+  $("breakdown-options").addEventListener("click",event=>{
+    const button=event.target.closest("button[data-group]");
+    if(!button)return;
+    breakdown=button.dataset.group;
+    for (const b of $("breakdown-options").querySelectorAll("button")) b.setAttribute("aria-pressed",String(b===button));
+    renderBreakdown();
+  });
+  $("breakdown-bars").addEventListener("click",event=>{
+    const button=event.target.closest("button[data-index]");
+    if(!button)return;
+    const index=Number(button.dataset.index);
+    setFilter(breakdown,filters[breakdown]===index?null:index);
+    const next=$("breakdown-bars").querySelector('button[data-index="'+index+'"]');
+    (next??selects[breakdown]).focus({preventScroll:true});
+  });
+  $("discount-rows").addEventListener("click",event=>{
+    const button=event.target.closest("button[data-band]");
+    if(!button)return;
+    const index=Number(button.dataset.band);
+    setFilter("band",filters.band===index?null:index);
+    const next=$("discount-rows").querySelector('button[data-band="'+index+'"]');
+    (next??selects.band).focus({preventScroll:true});
+  });
+  const trendChart=$("trend-chart");
+  trendChart.addEventListener("pointermove",event=>{
+    if(!chartState)return;
+    const {width,left,right}=chartState;
+    const bounds=trendChart.getBoundingClientRect();
+    const position=(event.clientX-bounds.left)*width/bounds.width;
+    if(position<left-9||position>right+9){hideTip();return;}
+    showTip(clamp(Math.round((position-left)*11/(right-left)),0,11));
+  });
+  trendChart.addEventListener("pointerleave",hideTip);
+  trendChart.addEventListener("focusin",event=>{
+    const month=event.target.closest("[data-month]");
+    if(month)showTip(Number(month.dataset.month));
+  });
+  trendChart.addEventListener("focusout",hideTip);
+  trendChart.addEventListener("keydown",event=>{if(event.key==="Escape")hideTip();});
+  trendChart.addEventListener("click",event=>{
+    const month=event.target.closest("[data-month]");
+    if(month)showTip(Number(month.dataset.month));
+  });
+  refresh();
+  let lastWidth = $("trend-plot").clientWidth;
+  const onResize=()=>{
+    const width=$("trend-plot").clientWidth;
+    if(width!==lastWidth){lastWidth=width;renderTrend();}
+  };
+  if ("ResizeObserver" in window) new ResizeObserver(onResize).observe($("trend-plot"));
+  else window.addEventListener("resize",onResize);
+})();
+</script>
+</body>
+</html>
